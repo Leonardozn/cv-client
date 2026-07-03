@@ -1,0 +1,268 @@
+.table-container {
+	width: 100%;
+	background-color: #ffffff;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #f3f4f6;
+	font-family: var(--font-family-base);
+}
+
+.table-responsive {
+	width: 100%;
+	overflow-x: auto;
+}
+
+.table__header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem 1.25rem;
+	border-bottom: 1px solid #e5e7eb;
+	gap: 1rem;
+}
+
+.table-container--themed .table__header-bar {
+	background-color: var(--table-theme-color);
+	border-bottom: none;
+}
+
+.table__title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: #111827;
+	margin: 0;
+}
+
+.table-container--themed .table__title {
+	color: #ffffff;
+}
+
+.table__search {
+	max-width: 300px;
+	flex: 1;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	text-align: center;
+}
+
+.table th {
+	padding: 0.75rem 1.25rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #4b5563;
+	border-bottom: 2px solid #e5e7eb;
+	background-color: #f9fafb;
+}
+
+.table-container--themed .table th {
+	background-color: var(--table-theme-color);
+	color: #ffffff;
+	border-bottom: none;
+}
+
+.table td {
+	padding: 0.75rem 1.25rem;
+	font-size: 0.875rem;
+	color: #1f2937;
+	border-bottom: 1px solid #f3f4f6;
+	vertical-align: middle;
+	min-width: 4rem;
+	max-width: 12.5rem;
+	overflow: hidden;
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* Alternate row styling */
+.table--alternate tbody tr:nth-child(even) td {
+	background-color: #f3f4f6;
+}
+
+/* Modern pastel mixing for alternate rows when themed */
+.table-container--themed .table--alternate tbody tr:nth-child(even) td {
+	background-color: color-mix(in srgb, var(--table-theme-color) 20%, transparent);
+}
+
+/* Ensure cell-level background definitions supersede alternate rows */
+.table td[style*="background-color"] {
+	background-color: inherit; /* overridden by inline style precisely */
+}
+
+/* Cell internals */
+.table__cell-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.table__cell-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.1em;
+	color: inherit;
+	flex-shrink: 0;
+}
+
+.table__cell-text {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
+}
+
+.table__cell--clickable {
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.table__cell--clickable:hover {
+	opacity: 0.7;
+}
+
+/* Action button miniaturization specifically for tables */
+.table__cell-action .action-btn {
+	width: 2rem;
+	height: 2rem;
+	font-size: 1rem;
+}
+
+/* Pagination container */
+.table__pagination {
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1.25rem;
+	gap: 0.75rem;
+	border-top: 1px solid #e5e7eb;
+	background-color: #ffffff;
+}
+
+.table__pagination--center {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+}
+
+.table__pagination--start {
+	justify-content: flex-start;
+}
+
+.table__pagination--end {
+	justify-content: flex-end;
+}
+
+/* Rows custom selector logic */
+.table__rows-container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+	color: #1f2937;
+}
+
+/* Grid layout for center: rows left | buttons center | spacer right */
+.table__pagination--center .table__rows-container {
+	grid-column: 1;
+	justify-self: start;
+}
+
+.table__pagination--center .table__pagination-buttons {
+	grid-column: 2;
+	justify-self: center;
+}
+
+.table__pagination--end .table__rows-container {
+	margin-right: auto;
+}
+
+.table__pagination--start .table__rows-container {
+	order: 2;
+	margin-left: auto;
+}
+
+/* Restyling a native select precisely for table footer resembling screenshot */
+.table__rows-select {
+	padding: 0.25rem 1.75rem 0.25rem 0.75rem;
+	border: none;
+	border-radius: 6px;
+	background-color: #f3f4f6;
+	font-family: inherit;
+	font-size: 0.875rem;
+	color: #4b5563;
+	cursor: pointer;
+	outline: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.4rem center;
+	background-size: 1rem;
+}
+
+/* ── Responsive list view ─────────────────────────────────── */
+/*
+ * By default the SimpleList view is hidden. At the configured
+ * breakpoint the table is hidden and the list view is shown.
+ */
+
+.table-list-view {
+	display: none;
+}
+
+.table-list-view .simple-list {
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.table-list-view .simple-list:last-child {
+	border-bottom: none;
+}
+
+@media (max-width: 640px) {
+	.table-container--responsive-sm .table-responsive { display: none; }
+	.table-container--responsive-sm .table-list-view { display: block; }
+}
+
+@media (max-width: 768px) {
+	.table-container--responsive-md .table-responsive { display: none; }
+	.table-container--responsive-md .table-list-view { display: block; }
+}
+
+@media (max-width: 1024px) {
+	.table-container--responsive-lg .table-responsive { display: none; }
+	.table-container--responsive-lg .table-list-view { display: block; }
+}
+
+@media (max-width: 1280px) {
+	.table-container--responsive-xl .table-responsive { display: none; }
+	.table-container--responsive-xl .table-list-view { display: block; }
+}
+
+.table__rows-select:hover {
+	background-color: #e5e7eb;
+}
+
+.table__pagination-buttons {
+	display: inline-flex;
+}
+
+/* Make pagination buttons smaller inside Table */
+.table__pagination-buttons .btn-group-item {
+	padding: 0.25rem 0.75rem;
+	font-size: 0.85rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Internal Table Pagination Ellipsis Styling */
+.table__pagination-buttons span.btn-group-item--ellipsis {
+	cursor: default;
+	pointer-events: none;
+}

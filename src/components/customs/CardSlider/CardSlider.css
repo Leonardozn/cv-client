@@ -1,0 +1,93 @@
+/* ============================================================
+	 CardSlider — Custom Component Styles
+	 ============================================================ */
+
+.card-slider {
+	position: relative;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	border-radius: 8px; /* Safe default if they have a background color */
+	margin-bottom: var(--cs-margin-bottom);
+	padding: var(--cs-padding);
+	background-color: var(--cs-bg);
+}
+
+/* ── Sliding Track ────────────────────────────────────────── */
+.card-slider__track {
+	display: flex;
+	gap: var(--cs-gap);
+	width: 100%;
+	overflow-x: auto;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+	
+	/* Hide scrollbars natively */
+	-ms-overflow-style: none;  /* IE and Edge */
+	scrollbar-width: none;     /* Firefox */
+}
+
+.card-slider__track::-webkit-scrollbar {
+	display: none; /* Chrome, Safari and Opera */
+}
+
+/* ── Child Layout Constraints ─────────────────────────────── */
+.card-slider__track > * {
+	/* Prevent children from shrinking */
+	flex: 0 0 auto;
+	scroll-snap-align: start;
+}
+
+/* ── Navigation Arrows ────────────────────────────────────── */
+.card-slider__arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	border: none;
+	background-color: #ffffff;
+	color: #3483fa; /* Mercado Libre active blue look */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 10;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.card-slider__arrow:hover {
+	transform: translateY(-50%) scale(1.05);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-slider__arrow:active {
+	transform: translateY(-50%) scale(0.95);
+}
+
+.card-slider__arrow--hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Overhang off the edge */
+.card-slider__arrow--left {
+	left: -24px;
+}
+
+.card-slider__arrow--right {
+	right: -24px;
+}
+
+/* Responsive constraints: ensure arrows stay inside viewport if screen is tight */
+@media (max-width: 768px) {
+	.card-slider__arrow--left {
+		left: 8px;
+	}
+	
+	.card-slider__arrow--right {
+		right: 8px;
+	}
+}

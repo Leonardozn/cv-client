@@ -1,0 +1,415 @@
+/* ============================================================
+	 InputDatetime — Custom Component Styles
+	 Scope: internal layout only. No external margin.
+	 Accent color via --idt-color CSS custom property.
+	 ============================================================ */
+
+/* ── Root wrapper ─────────────────────────────────────────── */
+.input-datetime {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	width: 100%;
+}
+
+/* ── Label ────────────────────────────────────────────────── */
+.idt__label {
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-text);
+}
+
+/* ── Field trigger ────────────────────────────────────────── */
+.idt__field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 0.5rem 0.75rem;
+	border: 2px solid #e5e7eb;
+	border-radius: 6px;
+	background-color: var(--color-bg);
+	cursor: pointer;
+	min-height: 42px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	user-select: none;
+}
+
+.idt__field--disabled {
+	background-color: var(--color-bg-alt, #f9fafb);
+	color: var(--color-text-light, #9ca3af);
+	cursor: not-allowed;
+	opacity: 0.8;
+}
+
+.idt__field:hover {
+	border-color: var(--idt-color);
+}
+
+.idt__field--open {
+	border-color: var(--idt-color);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--idt-color) 20%, transparent);
+}
+
+/* ── Value text ───────────────────────────────────────────── */
+.idt__value {
+	flex: 1;
+	font-family: var(--font-family-base);
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.idt__value--placeholder {
+	font-weight: 400;
+	color: var(--color-text-light);
+}
+
+/* ── Calendar icon ────────────────────────────────────────── */
+.idt__icon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--color-text-light);
+	flex-shrink: 0;
+	line-height: 0;
+}
+
+/* ── Panel ────────────────────────────────────────────────── */
+.idt__panel {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	z-index: 200;
+	background-color: var(--color-bg);
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+	overflow: hidden;
+	min-width: 500px;
+}
+
+/* ── Panel body: calendar (left) + time (right) ───────────── */
+.idt__panel-body {
+	display: flex;
+	flex-direction: row;
+}
+
+/* ── Vertical divider between calendar and time ───────────── */
+.idt__divider {
+	width: 1px;
+	background-color: #e5e7eb;
+	align-self: stretch;
+	flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+	 CALENDAR (left side)
+	 ═══════════════════════════════════════════════════════════ */
+
+.idt__calendar {
+	padding: 16px;
+	min-width: 280px;
+	flex-shrink: 0;
+}
+
+/* Header: month label + nav arrows */
+.idt__cal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 14px;
+}
+
+.idt__cal-month-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-family: var(--font-family-base);
+	font-size: 0.9375rem;
+	font-weight: 700;
+	color: var(--color-text);
+	user-select: none;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+}
+
+.idt__cal-month-label svg {
+	transition: transform 0.2s ease;
+}
+
+.idt__cal-month-label--open svg {
+	transform: rotate(180deg);
+}
+
+.idt__cal-nav {
+	display: flex;
+	gap: 4px;
+}
+
+.idt__cal-nav-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: none;
+	background: none;
+	border-radius: 6px;
+	color: var(--color-text-light);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+	line-height: 0;
+}
+
+.idt__cal-nav-btn:hover {
+	background-color: #f3f4f6;
+	color: var(--color-text);
+}
+
+/* Weekday headers */
+.idt__cal-weekdays {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	margin-bottom: 4px;
+}
+
+.idt__cal-weekday {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 32px;
+	font-family: var(--font-family-base);
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--color-text-light);
+}
+
+/* Day grid */
+.idt__cal-grid {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 2px;
+}
+
+.idt__cal-pad {
+	display: block;
+	height: 36px;
+}
+
+.idt__cal-day {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	margin: 0 auto;
+	border: none;
+	border-radius: 50%;
+	background: none;
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	color: var(--color-text);
+	cursor: pointer;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.idt__cal-day:hover:not(.idt__cal-day--selected):not(.idt__cal-day--disabled) {
+	background-color: #f3f4f6;
+}
+
+.idt__cal-day--selected {
+	background-color: var(--idt-color);
+	color: var(--color-bg);
+	font-weight: 700;
+}
+
+.idt__cal-day--today {
+	font-weight: 700;
+	color: var(--idt-color);
+}
+
+.idt__cal-day--disabled {
+	color: var(--color-neutral);
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ── Year Grid ────────────────────────────────────────────── */
+.idt__year-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 8px;
+	height: 252px;
+	overflow-y: auto;
+	padding-right: 4px;
+	scrollbar-width: thin;
+	scrollbar-color: #d1d5db transparent;
+}
+
+.idt__year-grid::-webkit-scrollbar { width: 4px; }
+.idt__year-grid::-webkit-scrollbar-track { background: transparent; }
+.idt__year-grid::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 4px; }
+
+.idt__year-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 36px;
+	border: none;
+	background: none;
+	border-radius: 18px;
+	font-family: var(--font-family-base);
+	font-size: 0.9rem;
+	color: var(--color-text);
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.idt__year-btn:hover:not(.idt__year-btn--selected) {
+	background-color: #f3f4f6;
+}
+
+.idt__year-btn--selected {
+	background-color: var(--idt-color);
+	color: var(--color-bg);
+	font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+	 TIME (right side)
+	 ═══════════════════════════════════════════════════════════ */
+
+.idt__time {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+/* Column headers (HH / MM / SS) */
+.idt__col-headers {
+	display: flex;
+	border-bottom: 1px solid #e5e7eb;
+	padding: 8px 0 6px;
+}
+
+.idt__col-headers span {
+	flex: 1;
+	font-family: var(--font-family-base);
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--color-text-light);
+	text-align: center;
+	letter-spacing: 0.04em;
+}
+
+/* Columns row */
+.idt__columns {
+	display: flex;
+	flex: 1;
+	/* Fix height to match calendar body */
+	height: 252px;
+}
+
+/* Scrollable column */
+.idt__col {
+	flex: 1;
+	height: 252px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	border-right: 1px solid #e5e7eb;
+
+	scrollbar-width: thin;
+	scrollbar-color: #d1d5db transparent;
+}
+
+.idt__col:last-child {
+	border-right: none;
+}
+
+.idt__col::-webkit-scrollbar       { width: 4px; }
+.idt__col::-webkit-scrollbar-track { background: transparent; }
+.idt__col::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 4px; }
+
+/* AM/PM column — no scroll, centered */
+.idt__col--period {
+	overflow-y: visible;
+	justify-content: center;
+	gap: 6px;
+	padding: 12px 4px;
+}
+
+/* Column item button */
+.idt__col-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 9px 4px;
+	border: none;
+	background: none;
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	color: var(--color-text);
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.idt__col-item:hover:not(.idt__col-item--selected) {
+	background-color: #f3f4f6;
+}
+
+.idt__col-item--selected {
+	background-color: var(--idt-color);
+	color: var(--color-bg);
+	font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════
+	 FOOTER (spans full panel width)
+	 ═══════════════════════════════════════════════════════════ */
+
+.idt__footer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 12px;
+	border-top: 1px solid #e5e7eb;
+}
+
+.idt__btn-cancel,
+.idt__btn-ok {
+	border: none;
+	background: none;
+	font-family: var(--font-family-base);
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 6px 10px;
+	border-radius: 4px;
+	letter-spacing: 0.06em;
+	transition: background-color 0.15s ease;
+}
+
+.idt__btn-cancel {
+	color: var(--color-text-light);
+}
+
+.idt__btn-cancel:hover {
+	background-color: #f3f4f6;
+	color: var(--color-text);
+}
+
+.idt__btn-ok {
+	color: var(--idt-color);
+}
+
+.idt__btn-ok:hover {
+	background-color: color-mix(in srgb, var(--idt-color) 12%, transparent);
+}

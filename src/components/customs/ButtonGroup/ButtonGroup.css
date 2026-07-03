@@ -1,0 +1,72 @@
+.btn-group {
+	display: inline-flex;
+}
+
+/* Base item styles */
+.btn-group-item {
+	padding: 0.5rem 1.25rem;
+	border: 2px solid var(--accent);
+	border-radius: 0;
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* Collapse shared border between adjacent items */
+.btn-group-item + .btn-group-item {
+	margin-left: -2px;
+}
+
+/* Round outer corners */
+.btn-group-item:first-child {
+	border-radius: 6px 0 0 6px;
+}
+
+.btn-group-item:last-child {
+	border-radius: 0 6px 6px 0;
+}
+
+/* Single item case */
+.btn-group-item:first-child:last-child {
+	border-radius: 6px;
+}
+
+/* Active — solid filled, on top to show full border */
+.btn-group-item--active {
+	background-color: var(--accent);
+	color: #ffffff;
+	z-index: 1;
+	position: relative;
+}
+
+/* Inactive (outline=false) — same fill, reduced opacity */
+.btn-group-item--inactive {
+	background-color: var(--accent);
+	color: #ffffff;
+	opacity: 0.5;
+}
+
+.btn-group-item--inactive:hover {
+	opacity: 0.75;
+}
+
+/* Inactive (outline=true) — transparent background */
+.btn-group-item--outline {
+	background-color: transparent;
+	color: var(--accent);
+}
+
+.btn-group-item--outline:hover {
+	background-color: var(--accent);
+	color: #ffffff;
+	opacity: 0.85;
+}
+
+/* Type variants — set --accent variable */
+.btn-group--primary    { --accent: var(--color-primary); }
+.btn-group--secondary  { --accent: var(--color-secondary); }
+.btn-group--tertiary   { --accent: var(--color-tertiary); }
+.btn-group--quaternary { --accent: var(--color-quaternary); }
+.btn-group--neutral    { --accent: var(--color-neutral); }

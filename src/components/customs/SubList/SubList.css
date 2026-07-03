@@ -1,0 +1,528 @@
+/* ============================================================
+	 SubList — Custom Component Styles
+	 ============================================================ */
+
+.sublist {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.sublist__label {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--color-foreground-muted, #555);
+	margin-bottom: 0.125rem;
+}
+
+/* ── Table wrapper ────────────────────────────────────────── */
+/* Border & radius live here so the table itself can overflow freely,
+	 allowing Select dropdowns to render above the table edge.           */
+
+.sublist__table-wrapper {
+	width: fit-content;
+	min-width: 100%;
+	border: 1px solid var(--color-border, #e5e7eb);
+	border-radius: 0.5rem;
+	overflow: visible;     /* DO NOT set hidden — would clip dropdowns */
+}
+
+/* ── Table layout ─────────────────────────────────────────── */
+
+.sublist__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.875rem;
+}
+
+.sublist__thead {
+	background-color: var(--color-bg-alt, #f9fafb);
+}
+
+.sublist__thead th {
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+	font-weight: 600;
+	font-size: 0.78rem;
+	color: var(--color-foreground-muted, #6b7280);
+	border-bottom: 1px solid var(--color-border, #e5e7eb);
+	white-space: nowrap;
+}
+
+.sublist__thead th:first-child {
+	border-radius: 0.5rem 0 0 0;
+}
+
+.sublist__thead th:last-child {
+	width: 2.75rem;
+	text-align: center;
+	border-radius: 0 0.5rem 0 0;
+}
+
+.sublist__header-hint {
+	font-size: 0.7rem;
+	font-weight: 500;
+	color: var(--color-foreground-muted, #9ca3af);
+	margin-left: 0.25rem;
+	font-style: italic;
+}
+
+.sublist__tbody tr {
+	border-bottom: 1px solid var(--color-border, #e5e7eb);
+	transition: background-color 0.15s ease;
+}
+
+.sublist__tbody tr:last-child {
+	border-bottom: none;
+}
+
+.sublist__tbody tr:hover {
+	background-color: var(--color-bg-alt, #f9fafb);
+}
+
+.sublist__tbody td {
+	padding: 0.35rem 0.5rem;
+	vertical-align: middle;
+	/* With table-layout: fixed, cells must not grow beyond their allocated width */
+	overflow: visible; /* Keep visible so Select dropdowns can escape */
+}
+
+.sublist__tbody td:last-child {
+	text-align: center;
+	width: 2.75rem;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+
+.sublist__empty {
+	text-align: center;
+	color: var(--color-foreground-muted, #9ca3af);
+	font-size: 0.82rem;
+	padding: 0.75rem 0;
+	font-style: italic;
+}
+
+/* ── Remove button ────────────────────────────────────────── */
+
+.sublist__remove-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--color-error, #ef4444);
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.15s ease, transform 0.15s ease;
+	flex-shrink: 0;
+}
+
+.sublist__remove-btn:hover {
+	background-color: var(--color-error-light, #fee2e2);
+	transform: scale(1.1);
+}
+
+.sublist__remove-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+	transform: none;
+}
+
+/* ── Add button ───────────────────────────────────────────── */
+
+.sublist__add-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.4rem 0.9rem;
+	border: 1.5px dashed var(--color-primary, #6366f1);
+	border-radius: 0.4rem;
+	background: transparent;
+	color: var(--color-primary, #6366f1);
+	font-size: 0.82rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+	align-self: flex-start;
+	margin-top: 0.25rem;
+}
+
+.sublist__add-btn:hover {
+	background-color: var(--color-primary-light, #eef2ff);
+}
+
+.sublist__add-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ── Cell inputs — compact inside table ───────────────────── */
+
+.sublist__tbody td .input,
+.sublist__tbody td .select,
+.sublist__tbody td .select-multiple {
+	margin: 0;
+}
+
+/* Text / number inputs: ensure a minimum legible width */
+.sublist__tbody td .input {
+	min-width: 7rem;
+}
+
+/* Give date/time inputs adequate width so the formatted string doesn't wrap */
+.sublist__tbody td .input-date {
+	min-width: 10rem;
+}
+.sublist__tbody td .input-datetime {
+	min-width: 13.5rem;
+}
+.sublist__tbody td .input-time {
+	min-width: 8rem;
+}
+
+/* Limit filename width in table to prevent indefinite expansion */
+.sublist__tbody td .input-file-current {
+	max-width: 15rem;
+}
+
+/* Select / SelectMultiple inside a SubList cell: shrink to fit content.
+   `fit-content` lets the trigger grow only as wide as its content needs. */
+.sublist__tbody td .select,
+.sublist__tbody td .select-multiple {
+	position: relative;
+	width: fit-content;
+	min-width: 8rem;   /* prevents absurdly narrow selects */
+}
+
+/* Dropdown: un-pin the right edge so it can grow beyond the trigger width.
+   `right: auto` overrides the component's default `right: 0`.
+   `width: max-content` expands to the longest option label. */
+.sublist__tbody td .select .select-dropdown,
+.sublist__tbody td .select-multiple .select-multiple-dropdown {
+	right: auto;        /* decouple from trigger right edge */
+	min-width: 100%;   /* at least as wide as the trigger */
+	width: max-content; /* grows to fit the longest option label */
+}
+
+/* ── Nested sublist cell ──────────────────────────────────── */
+
+.sublist__nested-cell {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.4rem;
+	min-width: max-content;
+	flex-wrap: nowrap;
+}
+
+.sublist__nested-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	min-height: 1.6rem;
+	align-items: center;
+	flex: 1;
+}
+
+.sublist__nested-empty {
+	font-size: 0.75rem;
+	color: var(--color-foreground-muted, #9ca3af);
+	font-style: italic;
+}
+
+.sublist__nested-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	padding: 0.15rem 0.45rem;
+	background-color: var(--color-primary-light, #eef2ff);
+	color: var(--color-primary, #6366f1);
+	border: 1px solid var(--color-primary, #6366f1);
+	border-radius: 999px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	transition: background-color 0.15s ease;
+	user-select: none;
+}
+
+.sublist__nested-badge:hover {
+	background-color: color-mix(in srgb, var(--color-primary, #6366f1) 15%, transparent);
+}
+
+.sublist__nested-badge-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: inherit;
+	padding: 0;
+	line-height: 1;
+	font-size: 0.9rem;
+	opacity: 0.7;
+	transition: opacity 0.15s ease;
+}
+
+.sublist__nested-badge-remove:hover {
+	opacity: 1;
+}
+
+.sublist__nested-add-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.6rem;
+	height: 1.6rem;
+	border: 1.5px dashed var(--color-primary, #6366f1);
+	border-radius: 0.35rem;
+	background: transparent;
+	color: var(--color-primary, #6366f1);
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+	flex-shrink: 0;
+}
+
+.sublist__nested-add-btn:hover {
+	background-color: var(--color-primary-light, #eef2ff);
+}
+
+.sublist__nested-edit-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.6rem;
+	height: 1.6rem;
+	border: 1.5px solid var(--color-secondary, #8b5cf6);
+	border-radius: 0.35rem;
+	background: transparent;
+	color: var(--color-secondary, #8b5cf6);
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+	flex-shrink: 0;
+}
+
+.sublist__nested-edit-btn:hover {
+	background-color: color-mix(in srgb, var(--color-secondary, #8b5cf6) 12%, transparent);
+}
+
+/* ── Nested manage modal rows ────────────────────────── */
+
+.sublist__nested-manage {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.sublist__nested-manage-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem 0.25rem;
+	border-bottom: 1px solid var(--color-border, #e5e7eb);
+	transition: background-color 0.1s ease;
+}
+
+.sublist__nested-manage-row:last-of-type {
+	border-bottom: none;
+}
+
+.sublist__nested-manage-row:hover {
+	background-color: var(--color-bg-alt, #f9fafb);
+}
+
+.sublist__nested-manage-label {
+	font-size: 0.85rem;
+	color: var(--color-foreground, #111);
+	font-weight: 500;
+}
+
+.sublist__nested-manage-actions {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.sublist__nested-manage-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	cursor: pointer;
+	font-size: 0.85rem;
+	transition: background-color 0.15s ease;
+}
+
+.sublist__nested-manage-btn--edit {
+	color: var(--color-secondary, #8b5cf6);
+}
+
+.sublist__nested-manage-btn--edit:hover {
+	background-color: color-mix(in srgb, var(--color-secondary, #8b5cf6) 12%, transparent);
+}
+
+.sublist__nested-manage-btn--remove {
+	color: var(--color-error, #ef4444);
+}
+
+.sublist__nested-manage-btn--remove:hover {
+	background-color: var(--color-error-light, #fee2e2);
+}
+
+/* ── Responsive breakpoints ───────────────────────────────── */
+/*
+ * At the configured breakpoint, the table collapses to a vertical
+ * card layout. Each row becomes a block and each cell stacks
+ * vertically, using data-label for the column header.
+ */
+
+@media (max-width: 640px) {
+	.sublist--responsive-sm .sublist__table-wrapper { overflow-x: visible; }
+	.sublist--responsive-sm .sublist__table,
+	.sublist--responsive-sm .sublist__thead,
+	.sublist--responsive-sm .sublist__tbody,
+	.sublist--responsive-sm .sublist__tbody tr,
+	.sublist--responsive-sm .sublist__tbody td { display: block; width: 100%; }
+	.sublist--responsive-sm .sublist__thead { display: none; }
+	.sublist--responsive-sm .sublist__tbody tr {
+		border: 1px solid var(--color-border, #e5e7eb);
+		border-radius: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		margin-bottom: 0.5rem;
+	}
+	.sublist--responsive-sm .sublist__tbody tr:last-child { margin-bottom: 0; }
+	.sublist--responsive-sm .sublist__tbody td {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--color-border, #e5e7eb);
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.sublist--responsive-sm .sublist__tbody td:last-child {
+		border-bottom: none;
+		text-align: right;
+		width: 100%;
+	}
+	.sublist--responsive-sm .sublist__tbody td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-foreground-muted, #6b7280);
+		margin-bottom: 0.25rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.sublist--responsive-md .sublist__table-wrapper { overflow-x: visible; }
+	.sublist--responsive-md .sublist__table,
+	.sublist--responsive-md .sublist__thead,
+	.sublist--responsive-md .sublist__tbody,
+	.sublist--responsive-md .sublist__tbody tr,
+	.sublist--responsive-md .sublist__tbody td { display: block; width: 100%; }
+	.sublist--responsive-md .sublist__thead { display: none; }
+	.sublist--responsive-md .sublist__tbody tr {
+		border: 1px solid var(--color-border, #e5e7eb);
+		border-radius: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		margin-bottom: 0.5rem;
+	}
+	.sublist--responsive-md .sublist__tbody tr:last-child { margin-bottom: 0; }
+	.sublist--responsive-md .sublist__tbody td {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--color-border, #e5e7eb);
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.sublist--responsive-md .sublist__tbody td:last-child {
+		border-bottom: none;
+		text-align: right;
+		width: 100%;
+	}
+	.sublist--responsive-md .sublist__tbody td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-foreground-muted, #6b7280);
+		margin-bottom: 0.25rem;
+	}
+}
+
+@media (max-width: 1024px) {
+	.sublist--responsive-lg .sublist__table-wrapper { overflow-x: visible; }
+	.sublist--responsive-lg .sublist__table,
+	.sublist--responsive-lg .sublist__thead,
+	.sublist--responsive-lg .sublist__tbody,
+	.sublist--responsive-lg .sublist__tbody tr,
+	.sublist--responsive-lg .sublist__tbody td { display: block; width: 100%; }
+	.sublist--responsive-lg .sublist__thead { display: none; }
+	.sublist--responsive-lg .sublist__tbody tr {
+		border: 1px solid var(--color-border, #e5e7eb);
+		border-radius: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		margin-bottom: 0.5rem;
+	}
+	.sublist--responsive-lg .sublist__tbody tr:last-child { margin-bottom: 0; }
+	.sublist--responsive-lg .sublist__tbody td {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--color-border, #e5e7eb);
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.sublist--responsive-lg .sublist__tbody td:last-child {
+		border-bottom: none;
+		text-align: right;
+		width: 100%;
+	}
+	.sublist--responsive-lg .sublist__tbody td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-foreground-muted, #6b7280);
+		margin-bottom: 0.25rem;
+	}
+}
+
+@media (max-width: 1280px) {
+	.sublist--responsive-xl .sublist__table-wrapper { overflow-x: visible; }
+	.sublist--responsive-xl .sublist__table,
+	.sublist--responsive-xl .sublist__thead,
+	.sublist--responsive-xl .sublist__tbody,
+	.sublist--responsive-xl .sublist__tbody tr,
+	.sublist--responsive-xl .sublist__tbody td { display: block; width: 100%; }
+	.sublist--responsive-xl .sublist__thead { display: none; }
+	.sublist--responsive-xl .sublist__tbody tr {
+		border: 1px solid var(--color-border, #e5e7eb);
+		border-radius: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		margin-bottom: 0.5rem;
+	}
+	.sublist--responsive-xl .sublist__tbody tr:last-child { margin-bottom: 0; }
+	.sublist--responsive-xl .sublist__tbody td {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--color-border, #e5e7eb);
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.sublist--responsive-xl .sublist__tbody td:last-child {
+		border-bottom: none;
+		text-align: right;
+		width: 100%;
+	}
+	.sublist--responsive-xl .sublist__tbody td[data-label]::before {
+		content: attr(data-label);
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		color: var(--color-foreground-muted, #6b7280);
+		margin-bottom: 0.25rem;
+	}
+}

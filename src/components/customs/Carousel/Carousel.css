@@ -1,0 +1,136 @@
+/* ============================================================
+	 Carousel — Custom Component Styles
+	 ============================================================ */
+
+.carousel {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--carousel-gap-dots); /* Space between viewport and dots */
+	margin-bottom: var(--carousel-mb);
+	padding: var(--carousel-p);
+	background-color: var(--carousel-bg);
+	border-radius: 8px;
+}
+
+/* ── Viewport (masks the track) ───────────────────────────── */
+.carousel__viewport {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 8px; /* Smooth corners for the whole frame */
+}
+
+/* ── Layout Variants & Math ───────────────────────────────── */
+.carousel--full {
+	--slide-width: 100%;
+	--carousel-gap: 0px;
+	--slide-offset: 0px;
+}
+
+.carousel--peek {
+	--slide-width: 82%;
+	--carousel-gap: 16px;
+	/* Centers the active slide: (100% - width) / 2 */
+	--slide-offset: 9%; 
+}
+
+/* ── Track (sliding container) ────────────────────────────── */
+.carousel__track {
+	display: flex;
+	height: 100%;
+	gap: var(--carousel-gap);
+	/* The core sliding logic using current index and layout vars */
+	transform: translateX(calc(-1 * var(--current-index) * (var(--slide-width) + var(--carousel-gap)) + var(--slide-offset)));
+	transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+	will-change: transform;
+}
+
+/* ── Individual Slide ─────────────────────────────────────── */
+.carousel__slide {
+	flex: 0 0 var(--slide-width);
+	width: var(--slide-width);
+	height: 100%;
+	border-radius: 8px; /* Internal rounding for peek mode */
+	overflow: hidden;
+	/* Faded out effect for inactive slides (optional polish) */
+	transition: opacity 0.4s ease;
+}
+
+.carousel--peek .carousel__slide {
+	opacity: 0.6;
+}
+
+/* Active slide becomes fully visible */
+.carousel--peek .carousel__slide--active {
+	opacity: 1;
+}
+
+.carousel__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	user-select: none;
+}
+
+/* ── Nav Buttons ──────────────────────────────────────────── */
+.carousel__btn {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: none;
+	background-color: rgba(255, 255, 255, 0.9);
+	color: #333;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 10;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.carousel__btn:hover {
+	background-color: #fff;
+	transform: translateY(-50%) scale(1.05);
+}
+
+.carousel__btn:active {
+	transform: translateY(-50%) scale(0.95);
+}
+
+.carousel__btn--left {
+	left: 1rem;
+}
+
+.carousel__btn--right {
+	right: 1rem;
+}
+
+/* ── Dots ─────────────────────────────────────────────────── */
+.carousel__dots {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.carousel__dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	border: none;
+	background-color: #d1d5db; /* Light gray */
+	cursor: pointer;
+	padding: 0;
+	transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.carousel__dot--active {
+	background-color: #4b5563; /* Dark gray */
+	transform: scale(1.2);
+}

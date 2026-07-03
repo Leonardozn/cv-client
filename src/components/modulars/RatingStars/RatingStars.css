@@ -1,0 +1,51 @@
+.rating-stars {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.15rem;
+	--star-size: 1.5rem; /* Default, overridden in component via style */
+}
+
+.rating-star {
+	position: relative;
+	display: inline-flex;
+	width: var(--star-size);
+	height: var(--star-size);
+	color: #d1d5db; /* Fallback for empty stars */
+	color: var(--color-neutral, #d1d5db); 
+	flex-shrink: 0;
+}
+
+.rating-star--interactive {
+	cursor: pointer;
+	transition: transform 0.2s ease;
+}
+
+.rating-star--interactive:hover {
+	transform: scale(1.15);
+}
+
+.rating-star__empty {
+	width: 100%;
+	height: 100%;
+	fill: transparent;
+	stroke: currentColor;
+}
+
+.rating-star__fill-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	overflow: hidden;
+	color: #f59e0b; /* Fallback for filled stars */
+	color: var(--rating-color-fill, var(--color-warning, #f59e0b)); 
+}
+
+.rating-star__fill-container .rating-star__filled {
+	width: var(--star-size);
+	height: var(--star-size);
+	max-width: none;
+	display: block;
+	fill: currentColor;
+	stroke: currentColor;
+}

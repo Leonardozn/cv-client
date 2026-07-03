@@ -1,0 +1,55 @@
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.65rem;
+	border: 1.5px solid transparent;
+	border-radius: 999px;
+	font-family: var(--font-family-base);
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: #ffffff;
+	white-space: nowrap;
+}
+
+.badge__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.1em;
+}
+
+/* Type variants — each sets --accent and background */
+.badge--primary {
+	--accent: var(--color-primary);
+	background-color: var(--accent);
+}
+
+.badge--secondary {
+	--accent: var(--color-secondary);
+	background-color: var(--accent);
+}
+
+.badge--tertiary {
+	--accent: var(--color-tertiary);
+	background-color: var(--accent);
+}
+
+.badge--quaternary {
+	--accent: var(--color-quaternary);
+	background-color: var(--accent);
+}
+
+.badge--neutral {
+	--accent: var(--color-neutral);
+	background-color: var(--accent);
+}
+
+/* Outline modifier — reuses --accent from the type class */
+.badge--outline {
+	background-color: transparent;
+	border-color: var(--accent);
+	color: var(--accent);
+}

@@ -1,0 +1,93 @@
+/* Modern Reset */
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+	/* Brand Colors */
+	--color-primary: #3b82f6;   /* Blue 500 */
+	--color-secondary: #10b981; /* Emerald 500 */
+	--color-tertiary: #f59e0b;  /* Amber 500 */
+	--color-quaternary: #8b5cf6; /* Violet 500 */
+	--color-neutral: #9ca3af;    /* Gray 400 */
+
+	/* Semantic Colors */
+	--color-info: #0d6efd;         /* Info Blue */
+	--color-info-bg: #cfe2ff;      /* Info Background */
+	--color-info-text: #084298;    /* Info Dark Text */
+
+	--color-success: #198754;      /* Success Green */
+	--color-success-bg: #d1e7dd;   /* Success Background */
+	--color-success-text: #0f5132; /* Success Dark Text */
+
+	--color-warning: #ffc107;      /* Warning Amber */
+	--color-warning-bg: #fff3cd;   /* Warning Background */
+	--color-warning-text: #664d03; /* Warning Dark Text */
+
+	--color-error: #dc3545;        /* Error Red */
+	--color-error-bg: #f8d7da;     /* Error Background */
+	--color-error-text: #842029;   /* Error Dark Text */
+
+	/* Neutral Colors */
+	--color-bg: #ffffff;
+	--color-text: #1f2937;      /* Gray 800 */
+	--color-text-light: #6b7280; /* Gray 500 */
+	
+	/* Typography */
+	--font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+	font-family: var(--font-family-base);
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	min-height: 100vh;
+}
+
+/* Base Typographic Examples */
+h1, h2, h3, h4, h5, h6 {
+	line-height: 1.2;
+	margin-bottom: 0.5em;
+	font-weight: 600;
+}
+
+a {
+	color: var(--color-primary);
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.2s;
+}
+
+a:hover {
+	color: var(--color-secondary); 
+	text-decoration: underline;
+}
+
+/* Utility for hidden elements */
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Elevation Utility Classes */
+.elevation-0 { box-shadow: none; }
+.elevation-1 { box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12); }
+.elevation-2 { box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12); }
+.elevation-3 { box-shadow: 0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12); }
+.elevation-4 { box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12); }
+.elevation-6 { box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12); }
+.elevation-8 { box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),0px 8px 10px 1px rgba(0,0,0,0.14),0px 3px 14px 2px rgba(0,0,0,0.12); }
+.elevation-12 { box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12); }
+.elevation-16 { box-shadow: 0px 8px 10px -5px rgba(0,0,0,0.2),0px 16px 24px 2px rgba(0,0,0,0.14),0px 6px 30px 5px rgba(0,0,0,0.12); }
+.elevation-24 { box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2),0px 24px 38px 3px rgba(0,0,0,0.14),0px 9px 46px 8px rgba(0,0,0,0.12); }

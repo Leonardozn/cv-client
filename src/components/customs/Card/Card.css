@@ -1,0 +1,305 @@
+/* ============================================================
+	 Card — Custom Component Styles
+	 Scope: internal layout only. No external margin.
+	 ============================================================ */
+
+.card {
+	display: flex;
+	width: 100%;
+	background-color: var(--color-bg);
+	border: 1px solid var(--color-neutral);
+	border-radius: 10px;
+	overflow: hidden;
+	transition:
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+}
+
+/* Clickable variant */
+.card--clickable {
+	cursor: pointer;
+}
+
+.card--clickable:hover {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+	transform: translateY(-2px);
+}
+
+.card--clickable:active {
+	transform: translateY(0);
+	box-shadow: none;
+}
+
+/* ── Layout: top (default) ────────────────────────────────── */
+/* Image above, content below */
+.card--layout-top {
+	flex-direction: column;
+}
+
+.card--layout-top .card__image-wrapper {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+}
+
+/* ── Layout: left ─────────────────────────────────────────── */
+/* Image on the left, content on the right */
+.card--layout-left {
+	flex-direction: row;
+}
+
+.card--layout-left .card__image-wrapper {
+	width: 40%;
+	flex-shrink: 0;
+	aspect-ratio: unset; /* height driven by row height, not ratio */
+}
+
+/* ── Layout: right ────────────────────────────────────────── */
+/* Image on the right, content on the left */
+.card--layout-right {
+	flex-direction: row-reverse;
+}
+
+.card--layout-right .card__image-wrapper {
+	width: 40%;
+	flex-shrink: 0;
+	aspect-ratio: unset;
+}
+
+/* ── Layout: background ───────────────────────────────────── */
+/* Image covers the full card; content is overlaid */
+.card--layout-background {
+	flex-direction: column;
+	position: relative;
+	min-height: 220px;
+}
+
+.card--layout-background .card__image-wrapper {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: unset;
+}
+
+/* Dark gradient for readability over the background image */
+.card--layout-background .card__image::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+}
+
+/* ── Overlay gradient — strength variants ─────────────────
+	 Only active for layout="background".
+	 medium is the default (identical to the original gradient).
+	 ───────────────────────────────────────────────────────── */
+.card--layout-background.card--overlay-light::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to top,
+		rgba(0, 0, 0, 0.40) 0%,
+		rgba(0, 0, 0, 0.08) 60%,
+		transparent 100%
+	);
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+.card--layout-background.card--overlay-medium::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to top,
+		rgba(0, 0, 0, 0.72) 0%,
+		rgba(0, 0, 0, 0.20) 60%,
+		transparent 100%
+	);
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+.card--layout-background.card--overlay-heavy::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to top,
+		rgba(0, 0, 0, 0.92) 0%,
+		rgba(0, 0, 0, 0.55) 60%,
+		rgba(0, 0, 0, 0.20) 100%
+	);
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+/* Push content to the bottom on background layout */
+.card--layout-background .card__content {
+	position: relative;
+	z-index: 1;
+	margin-top: auto;
+}
+
+/* Invert text colors for background layout */
+.card--layout-background .card__title,
+.card--layout-background .card__description {
+	color: var(--color-bg);
+}
+
+.card--layout-background .card__footer {
+	border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Image wrapper (base — shared) ───────────────────────── */
+.card__image-wrapper {
+	position: relative;
+	overflow: hidden;
+	background-color: var(--color-neutral);
+	flex-shrink: 0;
+}
+
+.card__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* ── Overlay layer (covers entire image) ─────────────────── */
+.card__overlays {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+/* Corner anchors */
+.card__overlay {
+	position: absolute;
+	display: flex;
+	gap: 6px;
+	pointer-events: all;
+	padding: 8px;
+}
+
+.card__overlay--tl {
+	top: 0;
+	left: 0;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+
+.card__overlay--tr {
+	top: 0;
+	right: 0;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+.card__overlay--bl {
+	bottom: 0;
+	left: 0;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+
+.card__overlay--br {
+	bottom: 0;
+	right: 0;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
+/* ── Overlay Badge pill (proprietary — full style control) ── */
+.card__overlay-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 8px;
+	border-radius: 20px;
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--color-bg);
+	white-space: nowrap;
+	line-height: 1.4;
+}
+
+.card__overlay-badge-icon {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.8rem;
+}
+
+/* ── Action buttons (proprietary — full style control) ────── */
+.card__action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	border: none;
+	background-color: var(--color-bg);
+	color: var(--color-text);
+	cursor: pointer;
+	font-size: 1rem;
+	transition:
+		background-color 0.2s ease,
+		transform 0.15s ease;
+	flex-shrink: 0;
+}
+
+.card__action-btn:hover {
+	background-color: var(--color-neutral);
+	transform: scale(1.1);
+}
+
+.card__action-btn:active {
+	transform: scale(0.95);
+}
+
+/* ── Content wrapper (body + footer column) ───────────────── */
+.card__content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0; /* prevents flex overflow */
+}
+
+/* ── Body ─────────────────────────────────────────────────── */
+.card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+	flex: 1;
+}
+
+/* Body-level badges row */
+.card__body-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.card__title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--color-text);
+	margin-bottom: 0;
+}
+
+.card__description {
+	font-size: 0.875rem;
+	color: var(--color-text-light);
+	line-height: 1.5;
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.card__footer {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px;
+	border-top: 1px solid var(--color-neutral);
+}

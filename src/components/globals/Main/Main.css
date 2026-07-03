@@ -1,0 +1,35 @@
+/* Main Layout Grid */
+.main-layout {
+	display: grid;
+	height: 100vh;
+	grid-template-columns: var(--sidebar-width-open) 1fr;
+	grid-template-rows: var(--appbar-height) 1fr;
+	transition: grid-template-columns 0.3s ease;
+}
+
+/* Collapsed State */
+.main-layout.sidebar-closed {
+	grid-template-columns: var(--sidebar-width-closed) 1fr;
+}
+
+/* Content Area */
+.main-content-area {
+	grid-column: 2;
+	grid-row: 2;
+	overflow-y: auto;
+	padding: 1.5rem;
+	background-color: #f9fafb;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+	.main-layout,
+	.main-layout.sidebar-open,
+	.main-layout.sidebar-closed {
+		grid-template-columns: var(--sidebar-width-closed) 1fr;
+	}
+
+	.main-content-area {
+		padding: 0rem;
+	}
+}

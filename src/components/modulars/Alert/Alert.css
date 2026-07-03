@@ -1,0 +1,61 @@
+.alert {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	font-family: var(--font-family-base);
+	font-size: 0.9rem;
+	font-weight: 500;
+	width: 100%;
+}
+
+.alert-icon {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.alert-text {
+	line-height: 1.4;
+}
+
+/* Info */
+.alert--info {
+	background-color: var(--color-info-bg);
+	color: var(--color-info-text);
+}
+
+.alert--info .alert-icon {
+	color: var(--color-info);
+}
+
+/* Success */
+.alert--success {
+	background-color: var(--color-success-bg);
+	color: var(--color-success-text);
+}
+
+.alert--success .alert-icon {
+	color: var(--color-success);
+}
+
+/* Warning */
+.alert--warning {
+	background-color: var(--color-warning-bg);
+	color: var(--color-warning-text);
+}
+
+.alert--warning .alert-icon {
+	color: var(--color-warning);
+}
+
+/* Error */
+.alert--error {
+	background-color: var(--color-error-bg);
+	color: var(--color-error-text);
+}
+
+.alert--error .alert-icon {
+	color: var(--color-error);
+}

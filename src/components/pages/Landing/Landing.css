@@ -1,0 +1,12 @@
+.landing-page {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background-color: var(--color-bg);
+}
+
+.landing-title {
+	color: var(--color-primary);
+	font-family: var(--font-family-base);
+}

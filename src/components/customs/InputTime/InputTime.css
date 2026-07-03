@@ -1,0 +1,215 @@
+/* ============================================================
+	 InputTime — Custom Component Styles
+	 Scope: internal layout only. No external margin.
+	 Accent color controlled via --input-time-color CSS variable.
+	 ============================================================ */
+
+/* ── Root wrapper ─────────────────────────────────────────── */
+.input-time {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	width: 100%;
+}
+
+/* ── Label ────────────────────────────────────────────────── */
+.input-time__label {
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-text);
+}
+
+/* ── Field trigger ────────────────────────────────────────── */
+.input-time__field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 0.5rem 0.75rem;
+	border: 2px solid #e5e7eb;
+	border-radius: 6px;
+	background-color: var(--color-bg);
+	cursor: pointer;
+	min-height: 42px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	user-select: none;
+}
+
+.input-time__field--disabled {
+	background-color: var(--color-bg-alt, #f9fafb);
+	color: var(--color-text-light, #9ca3af);
+	cursor: not-allowed;
+	opacity: 0.8;
+}
+
+.input-time__field:hover {
+	border-color: var(--input-time-color);
+}
+
+.input-time__field--open {
+	border-color: var(--input-time-color);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--input-time-color) 20%, transparent);
+}
+
+/* ── Value text ───────────────────────────────────────────── */
+.input-time__value {
+	flex: 1;
+	font-family: var(--font-family-base);
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.input-time__value--placeholder {
+	font-weight: 400;
+	color: var(--color-text-light);
+}
+
+/* ── Clock icon (accent colored) ──────────────────────────── */
+.input-time__icon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--input-time-color);
+	flex-shrink: 0;
+	line-height: 0;
+}
+
+/* ── Dropdown panel ───────────────────────────────────────── */
+.input-time__panel {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	z-index: 200;
+	background-color: var(--color-bg);
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+	min-width: 300px;
+	overflow: hidden;
+}
+
+/* ── Column headers ───────────────────────────────────────── */
+.input-time__col-headers {
+	display: flex;
+	border-bottom: 1px solid #e5e7eb;
+	padding: 8px 0 6px;
+}
+
+.input-time__col-headers span {
+	flex: 1;
+	font-family: var(--font-family-base);
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--color-text-light);
+	text-align: center;
+	letter-spacing: 0.04em;
+}
+
+/* ── Columns layout ───────────────────────────────────────── */
+.input-time__columns {
+	display: flex;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+/* ── Single scrollable column ─────────────────────────────── */
+.input-time__col {
+	flex: 1;
+	height: 200px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	border-right: 1px solid #e5e7eb;
+
+	/* Thin custom scrollbar */
+	scrollbar-width: thin;
+	scrollbar-color: #d1d5db transparent;
+}
+
+.input-time__col:last-child {
+	border-right: none;
+}
+
+.input-time__col::-webkit-scrollbar       { width: 4px; }
+.input-time__col::-webkit-scrollbar-track { background: transparent; }
+.input-time__col::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 4px; }
+
+/* AM/PM column — two items only, centered vertically, no scroll */
+.input-time__col--period {
+	height: auto;
+	overflow-y: visible;
+	justify-content: center;
+	gap: 6px;
+	padding: 16px 4px;
+	align-self: stretch;
+	border-right: none;
+}
+
+/* ── Column item button ───────────────────────────────────── */
+.input-time__col-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 9px 4px;
+	border: none;
+	background: none;
+	font-family: var(--font-family-base);
+	font-size: 0.9rem;
+	color: var(--color-text);
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.input-time__col-item:hover:not(.input-time__col-item--selected) {
+	background-color: #f3f4f6;
+}
+
+/* Selected item — filled with accent color */
+.input-time__col-item--selected {
+	background-color: var(--input-time-color);
+	color: var(--color-bg);
+	font-weight: 700;
+}
+
+/* ── Footer (CANCEL / OK) ─────────────────────────────────── */
+.input-time__footer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 10px;
+}
+
+.input-time__btn-cancel,
+.input-time__btn-ok {
+	border: none;
+	background: none;
+	font-family: var(--font-family-base);
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 6px 10px;
+	border-radius: 4px;
+	letter-spacing: 0.06em;
+	transition: background-color 0.15s ease;
+}
+
+.input-time__btn-cancel {
+	color: var(--color-text-light);
+}
+
+.input-time__btn-cancel:hover {
+	background-color: #f3f4f6;
+	color: var(--color-text);
+}
+
+.input-time__btn-ok {
+	color: var(--input-time-color);
+}
+
+.input-time__btn-ok:hover {
+	background-color: color-mix(in srgb, var(--input-time-color) 12%, transparent);
+}

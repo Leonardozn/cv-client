@@ -1,0 +1,106 @@
+.simple-list {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	background-color: transparent;
+}
+
+.simple-list__item {
+	display: flex;
+	align-items: center;
+	padding: 0.75rem 1rem;
+	min-height: 48px;
+	transition: background-color 0.2s ease;
+	position: relative;
+	background-color: #ffffff;
+}
+
+/* Optional separator lines */
+.simple-list__item:not(:last-child)::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 1rem;
+	right: 1rem;
+	height: 1px;
+	background-color: #f3f4f6;
+}
+
+.simple-list__item--clickable {
+	cursor: pointer;
+}
+
+.simple-list__item--clickable:hover {
+	background-color: #f9fafb;
+}
+
+/* Sides container (avatar, icon, action button) */
+.simple-list__side {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.simple-list__side--start {
+	margin-right: 1rem;
+}
+
+.simple-list__side--end {
+	margin-left: auto;
+}
+
+/* Icon fallback styling */
+.simple-list__icon {
+	font-size: 1.5rem;
+	color: #6b7280;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Make action buttons smaller when used in SimpleList */
+.simple-list__side .action-btn {
+	width: 2rem;
+	height: 2rem;
+	font-size: 1rem;
+}
+
+/* Multiple actions group */
+.simple-list__actions {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+/* Center main text content */
+.simple-list__content {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	min-width: 4rem;
+	max-width: 20rem;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.simple-list__primary-text {
+	font-family: var(--font-family-base);
+	font-size: 1rem;
+	color: #111827;
+	font-weight: 400;
+	line-height: 1.5;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.simple-list__secondary-text {
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+	color: #6b7280;
+	line-height: 1.25;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

@@ -1,0 +1,42 @@
+/* ============================================================
+	 ActionButton — Modular Component Styles
+	 ============================================================ */
+
+.action-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	
+	width: 3.5rem; /* ~56px base width */
+	height: 3.5rem;
+	border-radius: 50%;
+	border: none;
+	cursor: pointer;
+	
+	/* Icon styling */
+	color: #ffffff;
+	font-size: 1.5rem;
+	
+	background-color: var(--action-btn-bg, var(--color-primary));
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	
+	transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease, opacity 0.2s ease;
+	flex-shrink: 0; /* Prevents button from shrinking in flex rows */
+}
+
+.action-btn:hover {
+	transform: translateY(-2px) scale(1.02);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.action-btn:active {
+	transform: translateY(0) scale(0.98);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}

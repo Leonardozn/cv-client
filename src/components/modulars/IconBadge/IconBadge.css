@@ -1,0 +1,53 @@
+/* ============================================================
+	 IconBadge — Modular Component Styles
+	 ============================================================ */
+
+.icon-badge {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	/* Ensuring icons have line-height 0 to prevent box misalignments */
+	line-height: 0;
+}
+
+/* ── The little notification bubble ── */
+.icon-badge__bubble {
+	position: absolute;
+	top: 0;
+	right: 0;
+	/* Centered exactly on the top-right corner of the box */
+	transform: translate(45%, -45%);
+	
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	
+	background-color: var(--badge-bg, var(--color-error));
+	color: #ffffff;
+	
+	font-family: var(--font-family-base);
+	font-size: 0.65rem;
+	font-weight: 700;
+	
+	/* Use padding for pill-shape if text grows (like '999+') */
+	padding: 0 0.35rem;
+	min-width: 18px;
+	height: 18px;
+	border-radius: 999px; /* Max roundness */
+	
+	/* Border cutout effect to separate from the icon underneath */
+	border: 1.5px solid var(--color-bg);
+	
+	z-index: 10;
+	pointer-events: none; /* Prevents badge from swallowing hover events from the icon/button */
+}
+
+/* ── Variant: Dot only (no text) ── */
+.icon-badge__bubble--dot {
+	min-width: 10px;
+	height: 10px;
+	padding: 0;
+	/* Keep the border cutout */
+	border: 1.5px solid var(--color-bg);
+}

@@ -1,0 +1,35 @@
+.breadcrumb {
+	width: 100%;
+}
+
+.breadcrumb-list {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	font-family: var(--font-family-base);
+	font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.breadcrumb-label {
+	color: var(--color-text-light);
+}
+
+.breadcrumb-label--active {
+	color: var(--color-text);
+	font-weight: 500;
+}
+
+.breadcrumb-separator {
+	color: var(--color-text-light);
+	user-select: none;
+}

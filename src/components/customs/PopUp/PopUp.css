@@ -1,0 +1,183 @@
+/* ============================================================
+	 PopUp Component Styles
+	 ============================================================ */
+
+.popup {
+	position: fixed;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem 1.5rem; /* Larger padding than normal Alert */
+	border-radius: 8px;
+	font-family: var(--font-family-base);
+	font-size: 1rem;
+	font-weight: 500;
+	z-index: 9999; /* Prevent being hidden by other components */
+	width: auto;
+	max-width: 450px;
+	animation-duration: 0.3s;
+	animation-fill-mode: forwards;
+	animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.popup-icon {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.popup-text {
+	line-height: 1.4;
+	flex: 1; /* Allow text to push the close button to the right */
+}
+
+/* Base Types from Alert */
+.popup--info {
+	background-color: var(--color-info-bg);
+	color: var(--color-info-text);
+}
+.popup--info .popup-icon {
+	color: var(--color-info);
+}
+.popup--info .popup-close-btn {
+	color: var(--color-info) !important;
+	/* Darken the base color for the X icon */
+	filter: brightness(0.6);
+}
+
+.popup--success {
+	background-color: var(--color-success-bg);
+	color: var(--color-success-text);
+}
+.popup--success .popup-icon {
+	color: var(--color-success);
+}
+.popup--success .popup-close-btn {
+	color: var(--color-success) !important;
+	filter: brightness(0.6);
+}
+
+.popup--warning {
+	background-color: var(--color-warning-bg);
+	color: var(--color-warning-text);
+}
+.popup--warning .popup-icon {
+	color: var(--color-warning);
+}
+.popup--warning .popup-close-btn {
+	color: var(--color-warning) !important;
+	filter: brightness(0.6);
+}
+
+.popup--error {
+	background-color: var(--color-error-bg);
+	color: var(--color-error-text);
+}
+.popup--error .popup-icon {
+	color: var(--color-error);
+}
+.popup--error .popup-close-btn {
+	color: var(--color-error) !important;
+	filter: brightness(0.6);
+}
+
+/* ActionButton Overrides for PopUp Close */
+.popup-close-btn {
+	background-color: transparent !important;
+	box-shadow: none !important;
+	width: 2rem !important;
+	height: 2rem !important;
+	margin-left: 0.5rem;
+}
+
+.popup-close-btn:hover {
+	background-color: rgba(0, 0, 0, 0.05) !important;
+	transform: none !important; /* Disables ActionButton's pop-up scaling */
+}
+
+/* =========================================
+	 Orientations and Animations
+	 ========================================= */
+
+/* top-left */
+.popup--top-left {
+	top: 1.5rem;
+	left: 1.5rem;
+	animation-name: slideInLeft;
+}
+.popup--top-left.popup--closing {
+	animation-name: slideOutLeft;
+}
+
+/* top-right */
+.popup--top-right {
+	top: 1.5rem;
+	right: 1.5rem;
+	animation-name: slideInRight;
+}
+.popup--top-right.popup--closing {
+	animation-name: slideOutRight;
+}
+
+/* bottom-left */
+.popup--bottom-left {
+	bottom: 1.5rem;
+	left: 1.5rem;
+	animation-name: slideInLeft;
+}
+.popup--bottom-left.popup--closing {
+	animation-name: slideOutLeft;
+}
+
+/* bottom-right */
+.popup--bottom-right {
+	bottom: 1.5rem;
+	right: 1.5rem;
+	animation-name: slideInRight;
+}
+.popup--bottom-right.popup--closing {
+	animation-name: slideOutRight;
+}
+
+/* Keyframes */
+@keyframes slideInLeft {
+	from {
+		transform: translateX(-150%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+@keyframes slideOutLeft {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(-150%);
+		opacity: 0;
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		transform: translateX(150%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(150%);
+		opacity: 0;
+	}
+}
