@@ -3,15 +3,16 @@ import { APP_URL, AUTH_API_HOST, AUTH_API_PATH } from "../environment";
 
 const apiPath = AUTH_API_PATH;
 
-// ── Refresh connection ─────────────────────────────────────────────────────
-// Plain connection with no auth interceptor — avoids refresh loop
-const refreshConnection = createApiConnection({
+// ── Public connection ──────────────────────────────────────────────────────
+// Plain connection with no auth interceptor — used for endpoints that don't
+// require a session (register, login, refresh) and avoids the refresh loop.
+const publicConnection = createApiConnection({
 	baseURL: AUTH_API_HOST,
 });
 
 const handleRefresh = async () => {
 	const refreshToken = localStorage.getItem("refreshToken");
-	const response = await refreshConnection.post(`${apiPath}/auth/refresh`, { refreshToken });
+	const response = await publicConnection.post(`${apiPath}/auth/refresh`, { refreshToken });
 	const { accessToken, refreshToken: newRefreshToken } = response.data?.content || {};
 	if (accessToken) localStorage.setItem("accessToken", accessToken);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
@@ -27,6 +28,17 @@ export const basePathConfig = createApiConnection({
 	onRefresh: handleRefresh,
 	onExpired: APP_URL,
 });
+
+export const REGISTER_USER = {
+	name: "REGISTER_USER",
+	method: async (data, config = publicConnection) => {
+		const response = await config.post(`${apiPath}/auth/register`, data);
+		return response.data;
+	},
+	response: {
+		data: "content.user",
+	},
+};
 
 export const GET_USER_LIST = {
 	name: "GET_USER_LIST",
@@ -96,6 +108,7 @@ export const REMOVE_USER = {
 };
 
 export default {
+	REGISTER_USER,
 	GET_USER_LIST,
 	ADD_USER,
 	FIND_ONE_USER,
