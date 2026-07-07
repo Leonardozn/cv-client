@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Form from "../../customs/Form/Form";
 import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
@@ -14,16 +15,21 @@ const Register = () => {
 
 				{registered ? (
 					<p className="register-success">
-						Your account was created successfully. You can now sign in.
+						Your account was created successfully. You can now <Link to="/admin/login">sign in</Link>.
 					</p>
 				) : (
-					<Form
-						fields={fields}
-						onSubmit={actions.handleSubmit}
-						submitText="Create account"
-						isLoading={isSubmitting}
-						triggerPopUp={actions.openPopUp}
-					/>
+					<>
+						<Form
+							fields={fields}
+							onSubmit={actions.handleSubmit}
+							submitText="Create account"
+							isLoading={isSubmitting}
+							triggerPopUp={actions.openPopUp}
+						/>
+						<p className="register-footer">
+							Already have an account? <Link to="/admin/login">Sign in</Link>
+						</p>
+					</>
 				)}
 			</Sheet>
 

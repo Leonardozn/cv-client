@@ -40,6 +40,20 @@ export const REGISTER_USER = {
 	},
 };
 
+export const LOGIN_USER = {
+	name: "LOGIN_USER",
+	method: async (data, config = publicConnection) => {
+		const response = await config.post(`${apiPath}/auth/login`, data);
+		const { token, refreshToken } = response.data?.content || {};
+		if (token) localStorage.setItem("accessToken", token);
+		if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+		return response.data;
+	},
+	response: {
+		data: "content.user",
+	},
+};
+
 export const GET_USER_LIST = {
 	name: "GET_USER_LIST",
 	method: async (params = {}, config = basePathConfig) => {
@@ -109,6 +123,7 @@ export const REMOVE_USER = {
 
 export default {
 	REGISTER_USER,
+	LOGIN_USER,
 	GET_USER_LIST,
 	ADD_USER,
 	FIND_ONE_USER,
