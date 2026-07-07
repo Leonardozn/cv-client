@@ -264,6 +264,7 @@ export const useCurriculumFormController = () => {
 			handleSaveCertificate,
 			handleRemoveCertificate,
 			closePopUp,
+			openPopUp: triggerPopUp,
 		},
 	};
 };

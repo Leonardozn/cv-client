@@ -55,6 +55,7 @@ const Curriculum = () => {
 					onSubmit={actions.handleSavePersonalData}
 					submitText="Save"
 					isLoading={personalData.status === "SAVING"}
+					triggerPopUp={actions.openPopUp}
 				/>
 			</Sheet>
 
@@ -70,6 +71,7 @@ const Curriculum = () => {
 					onSubmit={actions.handleSaveProfile}
 					submitText="Save"
 					isLoading={profile.status === "SAVING"}
+					triggerPopUp={actions.openPopUp}
 				/>
 			</Sheet>
 
@@ -85,6 +87,7 @@ const Curriculum = () => {
 					onSubmit={actions.handleSaveSkills}
 					submitText="Save"
 					isLoading={skills.status === "SAVING"}
+					triggerPopUp={actions.openPopUp}
 				/>
 			</Sheet>
 
@@ -102,6 +105,7 @@ const Curriculum = () => {
 				disabledHint="Save your Personal Data first to add education entries."
 				onSave={actions.handleSaveEducation}
 				onRemove={actions.handleRemoveEducation}
+				triggerPopUp={actions.openPopUp}
 			/>
 
 			<EntryListSection
@@ -118,6 +122,7 @@ const Curriculum = () => {
 				disabledHint="Save your Personal Data first to add experience entries."
 				onSave={actions.handleSaveExperience}
 				onRemove={actions.handleRemoveExperience}
+				triggerPopUp={actions.openPopUp}
 			/>
 
 			<EntryListSection
@@ -134,6 +139,7 @@ const Curriculum = () => {
 				disabledHint="Save your Personal Data first to add certificates."
 				onSave={actions.handleSaveCertificate}
 				onRemove={actions.handleRemoveCertificate}
+				triggerPopUp={actions.openPopUp}
 			/>
 
 			<PopUp

@@ -100,12 +100,16 @@ const Form = ({
 			if (field.input === "sublist" && Array.isArray(field.structure)) {
 				const rows = formData[key] || [];
 				const requiredCols = field.structure.filter((col) => col.required);
+				// A primitive-mode sublist (single column + outputType) stores each row as a
+				// raw string/number/boolean, not `{ [col.id]: value }` — read the row itself.
+				const cellValue = (row, col) =>
+					row !== null && typeof row === "object" ? row[col.id] : row;
 
 				if (requiredCols.length > 0 && rows.length > 0) {
 					const rowErrorsArr = rows.map((row) => {
 						const rowErr = {};
 						requiredCols.forEach((col) => {
-							if (isEmptyValue(row[col.id])) {
+							if (isEmptyValue(cellValue(row, col))) {
 								rowErr[col.id] = true;
 							}
 						});
@@ -116,7 +120,7 @@ const Form = ({
 						newSublistErrors[key] = rowErrorsArr;
 						isValid = false;
 						requiredCols.forEach((col) => {
-							const missingInAnyRow = rows.some((row) => isEmptyValue(row[col.id]));
+							const missingInAnyRow = rows.some((row) => isEmptyValue(cellValue(row, col)));
 							if (missingInAnyRow) {
 								missingLabels.push(`${field.label || key} → ${col.label || col.id}`);
 							}

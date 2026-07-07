@@ -20,6 +20,7 @@ const EntryListSection = ({
 	disabledHint,
 	onSave,
 	onRemove,
+	triggerPopUp,
 }) => {
 	const [mode, setMode] = useState("closed");
 	const [editingId, setEditingId] = useState(null);
@@ -100,6 +101,7 @@ const EntryListSection = ({
 					onCancel={close}
 					submitText="Save"
 					isLoading={isSaving}
+					triggerPopUp={triggerPopUp}
 				/>
 			)}
 		</Sheet>
