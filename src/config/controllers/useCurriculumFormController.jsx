@@ -25,11 +25,14 @@ export const useCurriculumFormController = () => {
 	const closePopUp = useCallback(() => setPopUp((prev) => ({ ...prev, isOpen: false })), []);
 
 	// ── Shared save for the 3 sections that are just fields on Curriculum itself ──
-	const saveCurriculumSection = useCallback(async (fields, formData, sectionKey, setSectionState, currentId) => {
+	// `payloadData` may include fields from sibling sections: creating a Curriculum
+	// (no `currentId` yet) needs every required field (fullName/headline/city/
+	// profileSummary) at once, even though they're split across separate sections/Saves.
+	const saveCurriculumSection = useCallback(async (fields, formData, sectionKey, setSectionState, currentId, payloadData = formData) => {
 		setSectionState((prev) => ({ ...prev, status: "SAVING" }));
 		savePendingDraft(sectionKey, formData);
 		try {
-			const payload = preparePayload(formData, fields);
+			const payload = preparePayload(payloadData, fields);
 			const response = currentId
 				? await apiMethods.UPDATE_CURRICULUM.method(currentId, payload)
 				: await apiMethods.ADD_CURRICULUM.method(payload);
@@ -47,18 +50,18 @@ export const useCurriculumFormController = () => {
 		}
 	}, [triggerPopUp]);
 
-	const handleSavePersonalData = useCallback(
-		(formData) => saveCurriculumSection(personalDataFields, formData, "personalData", setPersonalData, curriculumId),
-		[saveCurriculumSection, curriculumId],
-	);
-	const handleSaveProfile = useCallback(
-		(formData) => saveCurriculumSection(profileFields, formData, "profile", setProfile, curriculumId),
-		[saveCurriculumSection, curriculumId],
-	);
-	const handleSaveSkills = useCallback(
-		(formData) => saveCurriculumSection(skillsFields, formData, "skills", setSkills, curriculumId),
-		[saveCurriculumSection, curriculumId],
-	);
+	const handleSavePersonalData = useCallback((formData) => {
+		const payloadData = curriculumId ? formData : { ...profile.value, ...skills.value, ...formData };
+		return saveCurriculumSection(personalDataFields, formData, "personalData", setPersonalData, curriculumId, payloadData);
+	}, [saveCurriculumSection, curriculumId, profile.value, skills.value]);
+	const handleSaveProfile = useCallback((formData) => {
+		const payloadData = curriculumId ? formData : { ...personalData.value, ...skills.value, ...formData };
+		return saveCurriculumSection(profileFields, formData, "profile", setProfile, curriculumId, payloadData);
+	}, [saveCurriculumSection, curriculumId, personalData.value, skills.value]);
+	const handleSaveSkills = useCallback((formData) => {
+		const payloadData = curriculumId ? formData : { ...personalData.value, ...profile.value, ...formData };
+		return saveCurriculumSection(skillsFields, formData, "skills", setSkills, curriculumId, payloadData);
+	}, [saveCurriculumSection, curriculumId, personalData.value, profile.value]);
 
 	const handleChangePersonalData = useCallback(
 		(key, val) => setPersonalData((prev) => ({ ...prev, value: { ...prev.value, [key]: val } })),
@@ -160,7 +163,16 @@ export const useCurriculumFormController = () => {
 					id = record._id || record.id;
 					setCurriculumId(id);
 					baseValues = {
-						personalData: { fullName: record.fullName, headline: record.headline, city: record.city, photo: record.photo, contactLinks: record.contactLinks || [] },
+						personalData: {
+							fullName: record.fullName,
+							headline: record.headline || [],
+							city: record.city,
+							state: record.state,
+							country: record.country,
+							phones: record.phones || [],
+							photo: record.photo,
+							contactLinks: record.contactLinks || [],
+						},
 						profile: { profileSummary: record.profileSummary },
 						skills: { skills: record.skills || [] },
 					};
@@ -182,18 +194,26 @@ export const useCurriculumFormController = () => {
 				triggerPopUp("error", "Couldn't load your curriculum. Some data may be missing.");
 			}
 
-			// Restore + auto-retry the 3 flat sections
+			// Restore + auto-retry the 3 flat sections. When there's still no curriculum,
+			// the retried payload must carry every section's known values at once (same
+			// reason as handleSavePersonalData/Profile/Skills above), not just its own.
+			const flatDraftValues = { ...baseValues };
 			const flatDrafts = [
-				["personalData", personalDataFields, setPersonalData, baseValues.personalData],
-				["profile", profileFields, setProfile, baseValues.profile],
-				["skills", skillsFields, setSkills, baseValues.skills],
+				["personalData", personalDataFields, setPersonalData],
+				["profile", profileFields, setProfile],
+				["skills", skillsFields, setSkills],
 			];
-			for (const [sectionKey, fields, setSectionState, baseValue] of flatDrafts) {
+			for (const [sectionKey, fields, setSectionState] of flatDrafts) {
 				const draft = loadPendingDraft(sectionKey);
 				if (!draft) continue;
-				const merged = { ...baseValue, ...draft };
+				const merged = { ...flatDraftValues[sectionKey], ...draft };
+				flatDraftValues[sectionKey] = merged;
 				setSectionState((prev) => ({ ...prev, value: merged, pendingSync: true }));
-				await saveCurriculumSection(fields, merged, sectionKey, setSectionState, id);
+				const payloadData = id
+					? merged
+					: { ...flatDraftValues.personalData, ...flatDraftValues.profile, ...flatDraftValues.skills };
+				const savedId = await saveCurriculumSection(fields, merged, sectionKey, setSectionState, id, payloadData);
+				if (savedId) id = savedId;
 			}
 
 			// Restore + auto-retry (when possible) the 3 list sections
