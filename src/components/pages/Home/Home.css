@@ -1,5 +1,47 @@
-.home-title {
+.home-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
 	padding: 1.5rem;
-	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.home-page--loading {
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+}
+
+.home-title {
+	font-size: 1.5rem;
+	font-weight: 600;
 	color: var(--color-foreground, #333333);
+	margin: 0;
+}
+
+.home-empty-state {
+	text-align: center;
+	color: var(--color-foreground-muted, #666666);
+	padding: 2rem;
+	margin: 0;
+	overflow-wrap: break-word;
+}
+
+.home-template-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1.5rem;
+}
+
+.home-template-grid .card__title {
+	overflow-wrap: break-word;
+}
+
+.home-template-grid .card__description {
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	overflow-wrap: break-word;
 }
