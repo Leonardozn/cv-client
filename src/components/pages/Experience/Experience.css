@@ -1,0 +1,49 @@
+.experience-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.experience-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+
+@media (min-width: 768px) {
+	.experience-actions {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+	}
+
+	.experience-actions-btn {
+		width: auto;
+		min-width: 200px;
+	}
+}
+
+.experience-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--color-foreground, #333333);
+	margin: 0;
+}
+
+.experience-empty-state {
+	text-align: center;
+	color: var(--color-foreground-muted, #666666);
+	padding: 2rem;
+	margin: 0;
+}
+
+.experience-content {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}

@@ -5,3 +5,7 @@ export const AUTH_API_HOST = import.meta.env.VITE_AUTH_API_HOST || "http://local
 export const AUTH_API_PATH = import.meta.env.VITE_AUTH_API_PATH || "/api";
 export const AUTH_STATIC_IMAGES_HOST = import.meta.env.VITE_AUTH_STATIC_IMAGES_HOST;
 export const AUTH_IMAGES_API_PATH = import.meta.env.VITE_AUTH_IMAGES_API_PATH || "/api/files";
+export const CV_API_HOST = import.meta.env.VITE_CV_API_HOST || "http://localhost:3000";
+export const CV_API_PATH = import.meta.env.VITE_CV_API_PATH || "/api";
+export const CV_STATIC_IMAGES_HOST = import.meta.env.VITE_CV_STATIC_IMAGES_HOST;
+export const CV_IMAGES_API_PATH = import.meta.env.VITE_CV_IMAGES_API_PATH || "/api/files";
