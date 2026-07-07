@@ -1,19 +1,21 @@
 import { createApiConnection } from "../api-connection";
-import { APP_URL, CV_API_HOST, CV_API_PATH } from "../environment";
+import { APP_URL, AUTH_API_HOST, AUTH_API_PATH, CV_API_HOST, CV_API_PATH } from "../environment";
 
 const apiPath = CV_API_PATH;
 
 // ── Refresh connection ─────────────────────────────────────────────────────
-// Plain connection with no auth interceptor — avoids refresh loop
+// Renewal always goes through auth-service, never cv-service — cv-service has
+// no /auth/refresh route of its own (see Protocolo de autenticación).
 const refreshConnection = createApiConnection({
-	baseURL: CV_API_HOST,
+	baseURL: AUTH_API_HOST,
 });
 
 const handleRefresh = async () => {
 	const refreshToken = localStorage.getItem("refreshToken");
-	const response = await refreshConnection.post(`${apiPath}/auth/refresh`, { refreshToken });
-	const { accessToken, refreshToken: newRefreshToken } = response.data?.content || {};
-	if (accessToken) localStorage.setItem("accessToken", accessToken);
+	const response = await refreshConnection.post(`${AUTH_API_PATH}/auth/refresh`, { refreshToken });
+	// auth-service's refresh contract returns the access token as "token", not "accessToken"
+	const { token, refreshToken: newRefreshToken } = response.data?.content || {};
+	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
 	return response;
 };
@@ -25,7 +27,7 @@ export const basePathConfig = createApiConnection({
 		Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 	}),
 	onRefresh: handleRefresh,
-	onExpired: APP_URL,
+	onExpired: `${APP_URL}/login`,
 });
 
 export const GET_CURRICULUM_LIST = {

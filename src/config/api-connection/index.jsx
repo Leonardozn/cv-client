@@ -1,6 +1,11 @@
 import axios from "axios";
 import { AUTH_STATES } from "../environment";
 
+const clearSession = () => {
+	localStorage.removeItem("accessToken");
+	localStorage.removeItem("refreshToken");
+};
+
 /**
  * Creates an Axios instance with optional authentication interceptors.
  *
@@ -49,6 +54,7 @@ export function createApiConnection({
 				errorRefresh = true;
 				console.error(err.response);
 				if (!onExpired) return Promise.reject(err);
+				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
 			}
@@ -81,6 +87,7 @@ export function createApiConnection({
 
 				console.error(error.response);
 				if (!onExpired) return Promise.reject(error);
+				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
 			}
