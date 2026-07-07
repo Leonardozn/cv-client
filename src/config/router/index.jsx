@@ -5,6 +5,10 @@ import NotFound from "../../components/pages/NotFound/NotFound";
 
 
 import User from "../../components/pages/User/User";
+import Curriculum from "../../components/pages/Curriculum/Curriculum";
+import Education from "../../components/pages/Education/Education";
+import Experience from "../../components/pages/Experience/Experience";
+import Certificate from "../../components/pages/Certificate/Certificate";
 const router = createBrowserRouter([
 	{
 		path: "/admin",
@@ -14,6 +18,22 @@ const router = createBrowserRouter([
 		path: "admin",
 		element: <Main />,
 		children: [
+			{
+				path: `certificate`,
+				element: <Certificate />,
+			},
+			{
+				path: `experience`,
+				element: <Experience />,
+			},
+			{
+				path: `education`,
+				element: <Education />,
+			},
+			{
+				path: `curriculum`,
+				element: <Curriculum />,
+			},
 			{
 				path: `user`,
 				element: <User />,
