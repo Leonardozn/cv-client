@@ -11,7 +11,11 @@ import "./SideMenu.css";
 // Menu Configuration
 // { label: "", link: "", icon: null || <Icon /> }
 const menuConfig = [
-
+	{
+		label: "User",
+		link: "user",
+		icon: null,
+	},
 ];
 
 // Renders a single menu item (with or without children)
