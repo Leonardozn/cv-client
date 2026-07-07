@@ -23,14 +23,14 @@ admin, una sección de administración de los catálogos Skill y Template. Toda 
 resuelve con el token de auth-service enviado como `Authorization: Bearer <token>`.
 
 > Nota de UI — listas flexibles: el formulario debe indicar explícitamente que los **enlaces de
-> contacto** y las **habilidades** son listas flexibles: el usuario puede agregar tantas entradas
-> como quiera y, en habilidades, escribir libremente además de aceptar las sugerencias del
-> catálogo (una habilidad que no figure igual se guarda).
+> contacto**, el **headline**, los **teléfonos** y las **habilidades** son listas flexibles: el
+> usuario puede agregar tantas entradas como quiera y, en habilidades, escribir libremente además
+> de aceptar las sugerencias del catálogo (una habilidad que no figure igual se guarda).
 >
 > Nota de UI — formulario por pasos (wizard): la captura de datos del CV NO es un formulario
 > único y largo, sino un asistente por pasos con navegación adelante/atrás e indicador de
-> progreso. Los pasos siguen las secciones del CV: (1) Datos personales (nombre, headline,
-> ciudad, foto, enlaces de contacto), (2) Perfil, (3) Habilidades, (4) Formación, (5)
+> progreso. Los pasos siguen las secciones del CV: (1) Datos personales (nombre, headline —lista—,
+> ciudad, estado, país, teléfonos —lista—, foto, enlaces de contacto), (2) Perfil, (3) Habilidades, (4) Formación, (5)
 > Experiencia, (6) Certificados y (7) Diseño y descarga (elegir Template, previsualizar y
 > descargar el PDF). Cada paso valida sus campos antes de avanzar; los pasos con listas
 > (formación, experiencia, certificados, habilidades, enlaces) permiten agregar/editar/eliminar
@@ -387,8 +387,11 @@ los bytes del archivo.
 | id             | id               | sí        | Identificador único del curriculum                       |
 | user           | reference → User | sí        | Dueño, único (id del User en auth-service)               |
 | fullName       | string           | sí        | Nombre completo mostrado como título del CV              |
-| headline       | string           | sí        | Titular/eslogan profesional bajo el nombre               |
-| city           | string           | sí        | Ciudad / ubicación (Datos personales)                    |
+| headline       | array of string  | sí        | Titulares/eslóganes profesionales bajo el nombre (lista flexible) |
+| city           | string           | sí        | Ciudad (Datos personales)                                |
+| state          | string           | sí        | Estado / provincia (Datos personales)                    |
+| country        | string           | sí        | País (Datos personales)                                  |
+| phones         | array of string  | no        | Teléfonos de contacto (Datos personales, lista flexible) |
 | photo          | string           | no        | Nombre de archivo de la foto de perfil (file upload)     |
 | profileSummary | string           | sí        | Texto libre del "Perfil"                                 |
 | skills         | array of string  | no        | Nombres de habilidades del sidebar (texto libre; el catálogo Skill solo sugiere) |
@@ -673,8 +676,8 @@ Artifact Contracts → "el cv-client solicita la generación del PDF vía cv-ser
    devuelve un 404 (no encontrado para este usuario).
 3. Carga el Curriculum más sus entradas de Education, Experience y Certificate desde cv-db, y
    resuelve el Template elegido (su `key` indica qué componente de diseño react-pdf usar).
-4. Renderiza el PDF con el componente de diseño del Template: sidebar con nombre, headline, foto,
-   datos personales (city, contactLinks) y habilidades; columna principal con Perfil
+4. Renderiza el PDF con el componente de diseño del Template: sidebar con nombre, headline (lista),
+   foto, datos personales (city, state, country, phones, contactLinks) y habilidades; columna principal con Perfil
    (profileSummary), Formación (Education), Experiencia (Experience) y Certificados
    (Certificate).
 5. Devuelve el archivo PDF como descarga binaria, sin persistir ningún registro.
