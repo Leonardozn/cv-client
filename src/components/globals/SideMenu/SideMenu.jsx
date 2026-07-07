@@ -14,7 +14,13 @@ import "./SideMenu.css";
 // Certificate, Skill, Template) were removed: this is an end-user product,
 // not an admin panel, so nobody should navigate a raw table of those models.
 // Real entries land here as their dedicated pages are built.
-const menuConfig = [];
+const menuConfig = [
+	{
+		label: "Home",
+		link: "home",
+		icon: null,
+	},
+];
 
 // Renders a single menu item (with or without children)
 const MenuItem = ({ item, isOpen }) => {

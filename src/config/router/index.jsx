@@ -5,6 +5,7 @@ import Register from "../../components/pages/Register/Register";
 import Login from "../../components/pages/Login/Login";
 import Main from "../../components/globals/Main/Main";
 import NotFound from "../../components/pages/NotFound/NotFound";
+import Home from "../../components/pages/Home/Home";
 
 
 import User from "../../components/pages/User/User";
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
 		path: MAIN_PATH,
 		element: <Main />,
 		children: [
+			{
+				path: `home`,
+				element: <Home />,
+			},
 			{
 				path: `template`,
 				element: <Template />,
