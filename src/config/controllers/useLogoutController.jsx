@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiMethods from "./auth";
 import { clearSession } from "../api-connection";
+import { LOGIN_PATH } from "../router/paths";
 
 export const useLogoutController = () => {
 	const navigate = useNavigate();
@@ -18,7 +19,7 @@ export const useLogoutController = () => {
 		} finally {
 			clearSession();
 			setIsSubmitting(false);
-			navigate("/admin/login");
+			navigate(LOGIN_PATH);
 		}
 	}, [navigate]);
 

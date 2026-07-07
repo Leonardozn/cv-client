@@ -1,5 +1,6 @@
 import { createApiConnection } from "../api-connection";
-import { APP_URL, AUTH_API_HOST, AUTH_API_PATH, CV_API_HOST, CV_API_PATH } from "../environment";
+import { AUTH_API_HOST, AUTH_API_PATH, CV_API_HOST, CV_API_PATH } from "../environment";
+import { LOGIN_PATH } from "../router/paths";
 
 const apiPath = CV_API_PATH;
 
@@ -27,7 +28,7 @@ export const basePathConfig = createApiConnection({
 		Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 	}),
 	onRefresh: handleRefresh,
-	onExpired: `${APP_URL}/login`,
+	onExpired: LOGIN_PATH,
 });
 
 export const GET_CURRICULUM_LIST = {
