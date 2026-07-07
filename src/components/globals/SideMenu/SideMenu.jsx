@@ -36,6 +36,16 @@ const menuConfig = [
 		link: "certificate",
 		icon: null,
 	},
+	{
+		label: "Skill",
+		link: "skill",
+		icon: null,
+	},
+	{
+		label: "Template",
+		link: "template",
+		icon: null,
+	},
 ];
 
 // Renders a single menu item (with or without children)

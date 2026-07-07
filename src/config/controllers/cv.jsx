@@ -296,7 +296,153 @@ export const REMOVE_CERTIFICATE = {
 	},
 };
 
+export const GET_SKILL_LIST = {
+	name: "GET_SKILL_LIST",
+	method: async (params = {}, config = basePathConfig) => {
+		const response = await config.get(`${apiPath}/skill`, { params });
+		return response.data;
+	},
+	response: {
+		data: "content.records",
+		count: "content.count",
+	},
+};
+
+export const ADD_SKILL = {
+	name: "ADD_SKILL",
+	method: async (data, config = basePathConfig) => {
+		const response = await config.post(`${apiPath}/skill`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const FIND_ONE_SKILL = {
+	name: "FIND_ONE_SKILL",
+	method: async (id, config = basePathConfig) => {
+		const response = await config.get(`${apiPath}/skill/${id}`);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const UPDATE_SKILL = {
+	name: "UPDATE_SKILL",
+	method: async (id, data, config = basePathConfig) => {
+		const response = await config.patch(`${apiPath}/skill/${id}`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const REPLACE_SKILL = {
+	name: "REPLACE_SKILL",
+	method: async (id, data, config = basePathConfig) => {
+		const response = await config.put(`${apiPath}/skill/${id}`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const REMOVE_SKILL = {
+	name: "REMOVE_SKILL",
+	method: async (id, config = basePathConfig) => {
+		const response = await config.delete(`${apiPath}/skill/${id}`);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const GET_TEMPLATE_LIST = {
+	name: "GET_TEMPLATE_LIST",
+	method: async (params = {}, config = basePathConfig) => {
+		const response = await config.get(`${apiPath}/template`, { params });
+		return response.data;
+	},
+	response: {
+		data: "content.records",
+		count: "content.count",
+	},
+};
+
+export const ADD_TEMPLATE = {
+	name: "ADD_TEMPLATE",
+	method: async (data, config = basePathConfig) => {
+		const response = await config.post(`${apiPath}/template`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const FIND_ONE_TEMPLATE = {
+	name: "FIND_ONE_TEMPLATE",
+	method: async (id, config = basePathConfig) => {
+		const response = await config.get(`${apiPath}/template/${id}`);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const UPDATE_TEMPLATE = {
+	name: "UPDATE_TEMPLATE",
+	method: async (id, data, config = basePathConfig) => {
+		const response = await config.patch(`${apiPath}/template/${id}`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const REPLACE_TEMPLATE = {
+	name: "REPLACE_TEMPLATE",
+	method: async (id, data, config = basePathConfig) => {
+		const response = await config.put(`${apiPath}/template/${id}`, data);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+export const REMOVE_TEMPLATE = {
+	name: "REMOVE_TEMPLATE",
+	method: async (id, config = basePathConfig) => {
+		const response = await config.delete(`${apiPath}/template/${id}`);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
 export default {
+	GET_TEMPLATE_LIST,
+	ADD_TEMPLATE,
+	FIND_ONE_TEMPLATE,
+	UPDATE_TEMPLATE,
+	REPLACE_TEMPLATE,
+	REMOVE_TEMPLATE,
+	GET_SKILL_LIST,
+	ADD_SKILL,
+	FIND_ONE_SKILL,
+	UPDATE_SKILL,
+	REPLACE_SKILL,
+	REMOVE_SKILL,
 	GET_CERTIFICATE_LIST,
 	ADD_CERTIFICATE,
 	FIND_ONE_CERTIFICATE,
