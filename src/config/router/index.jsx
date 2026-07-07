@@ -10,9 +10,6 @@ import Home from "../../components/pages/Home/Home";
 
 import User from "../../components/pages/User/User";
 import Curriculum from "../../components/pages/Curriculum/Curriculum";
-import Education from "../../components/pages/Education/Education";
-import Experience from "../../components/pages/Experience/Experience";
-import Certificate from "../../components/pages/Certificate/Certificate";
 import Skill from "../../components/pages/Skill/Skill";
 import Template from "../../components/pages/Template/Template";
 const router = createBrowserRouter([
@@ -43,18 +40,6 @@ const router = createBrowserRouter([
 			{
 				path: `skill`,
 				element: <Skill />,
-			},
-			{
-				path: `certificate`,
-				element: <Certificate />,
-			},
-			{
-				path: `experience`,
-				element: <Experience />,
-			},
-			{
-				path: `education`,
-				element: <Education />,
 			},
 			{
 				path: `curriculum`,
