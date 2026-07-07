@@ -1,22 +1,4 @@
-import {
-	BASE_PATH,
-} from "../../environment";
-
 export default [
-	{
-		id: "curriculum",
-		label: "Curriculum",
-		placeholder: "Curriculum",
-		input: "select",
-		value: '',
-		dynamicOptions: {
-			methodName: "GET_CURRICULUM_LIST",
-			valueKey: "_id",
-			labelKey: "name",
-		},
-		linkTo: `${BASE_PATH}/curriculum`,
-		required: true,
-	},
 	{
 		id: "title",
 		label: "Title",

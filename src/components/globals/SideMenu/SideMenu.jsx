@@ -10,40 +10,19 @@ import "./SideMenu.css";
 
 // Menu Configuration
 // { label: "", link: "", icon: null || <Icon /> }
+// The CLI-generated CRUD entries (User, Curriculum, Education, Experience,
+// Certificate, Skill, Template) were removed: this is an end-user product,
+// not an admin panel, so nobody should navigate a raw table of those models.
+// Real entries land here as their dedicated pages are built.
 const menuConfig = [
 	{
-		label: "User",
-		link: "user",
+		label: "Home",
+		link: "home",
 		icon: null,
 	},
 	{
 		label: "Curriculum",
 		link: "curriculum",
-		icon: null,
-	},
-	{
-		label: "Education",
-		link: "education",
-		icon: null,
-	},
-	{
-		label: "Experience",
-		link: "experience",
-		icon: null,
-	},
-	{
-		label: "Certificate",
-		link: "certificate",
-		icon: null,
-	},
-	{
-		label: "Skill",
-		link: "skill",
-		icon: null,
-	},
-	{
-		label: "Template",
-		link: "template",
 		icon: null,
 	},
 ];

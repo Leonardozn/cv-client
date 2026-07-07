@@ -1,174 +1,146 @@
-import React from "react";
-import Form from "../../customs/Form/Form";
-import { useCurriculumController } from "../../../config/controllers/useCurriculumController";
-
-import PopUp from "../../customs/PopUp/PopUp";
-import Modal from "../../customs/Modal/Modal";
 import Sheet from "../../customs/Sheet/Sheet";
-import Button from "../../modulars/Button/Button";
+import Form from "../../customs/Form/Form";
+import PopUp from "../../customs/PopUp/PopUp";
+import EntryListSection from "../../customs/EntryListSection/EntryListSection";
 import Spinner from "../../modulars/Spinner/Spinner";
-import ActionButton from "../../modulars/ActionButton/ActionButton";
-import DataTable from "../../customs/DataTable/DataTable";
-import { FiEdit2, FiEye, FiTrash2 } from "react-icons/fi";
+import { useCurriculumFormController } from "../../../config/controllers/useCurriculumFormController";
+import { personalDataFields, profileFields, skillsFields } from "../../../config/models/form-source/curriculum";
+import educationFields from "../../../config/models/form-source/education";
+import experienceFields from "../../../config/models/form-source/experience";
+import certificateFields from "../../../config/models/form-source/certificate";
 import "./Curriculum.css";
+
+const SectionStatus = ({ status, pendingSync }) => {
+	if (pendingSync) return <span className="curriculum-section__status curriculum-section__status--pending">Pending sync</span>;
+	if (status === "SAVED") return <span className="curriculum-section__status curriculum-section__status--saved">Saved</span>;
+	if (status === "ERROR") return <span className="curriculum-section__status curriculum-section__status--error">Couldn't save</span>;
+	return null;
+};
 
 const Curriculum = () => {
 	const {
-		data,
-		columns,
-		fields,
-		value,
-		pagination,
-		search,
-		modal,
-		confirm,
+		status,
+		curriculumId,
+		personalData,
+		profile,
+		skills,
+		education,
+		experience,
+		certificate,
 		popUp,
-		isLoading,
-		isSubmitting,
-		isViewMode,
-		actions
-	} = useCurriculumController();
+		actions,
+	} = useCurriculumFormController();
+
+	if (status === "INITIALIZING") {
+		return (
+			<div className="curriculum-page curriculum-page--loading">
+				<Spinner style={{ "--spinner-size": "2rem" }} />
+			</div>
+		);
+	}
 
 	return (
 		<div className="curriculum-page">
-			<h1 className="curriculum-title">Curriculum Management</h1>
+			<h1 className="curriculum-title">Curriculum</h1>
 
-			<Sheet className="curriculum-actions">
-				<div className="curriculum-actions-left">
-					{isLoading && <Spinner style={{ "--spinner-size": "2rem" }} />}
+			<Sheet className="curriculum-section" elevation={1}>
+				<div className="curriculum-section__header">
+					<h2 className="curriculum-section__title">Personal Data</h2>
+					<SectionStatus status={personalData.status} pendingSync={personalData.pendingSync} />
 				</div>
-				<div className="curriculum-actions-btn">
-					<Button 
-						text="New Curriculum" 
-						type="primary" 
-						onClick={actions.handleNew} 
-						disabled={isSubmitting}
-					/>
-				</div>
-			</Sheet>
-
-			<Sheet className="curriculum-content">
-				{data.length === 0 && !search.value && !isLoading ? (
-					<p className="curriculum-empty-state">
-						No records found. Use the "New Curriculum" button to add one.
-					</p>
-				) : (
-					<DataTable
-						columns={[
-							...columns,
-							{
-								key: "actions",
-								label: "Actions",
-								width: "120px",
-								renderCell: (_, item) => (
-									<div style={{ display: "flex", gap: "0.25rem" }}>
-										<ActionButton
-											icon={<FiEye />}
-											type="neutral"
-											onClick={() => actions.handleEdit(item, true)}
-											style={{
-												width: "2rem",
-												height: "2rem",
-												fontSize: "1rem",
-											}}
-										/>
-										<ActionButton
-											icon={<FiEdit2 />}
-											type="secondary"
-											onClick={() => actions.handleEdit(item, false)}
-											style={{
-												width: "2rem",
-												height: "2rem",
-												fontSize: "1rem",
-											}}
-										/>
-										<ActionButton
-											icon={<FiTrash2 />}
-											type="error"
-											onClick={() => actions.handleDelete(item)}
-											style={{
-												width: "2rem",
-												height: "2rem",
-												fontSize: "1rem",
-											}}
-										/>
-									</div>
-								),
-							},
-						]}
-						data={data}
-						alternate={true}
-						search={true}
-						searchValue={search.value}
-						onSearchChange={actions.setSearch}
-						pagination={{
-							currentPage: pagination.currentPage,
-							totalPages: pagination.totalPages,
-							onClick: actions.setPage,
-							rowsOptions: [5, 10, 20, 50],
-							rowsPerPage: pagination.rowsPerPage,
-							onRowsChange: actions.setRowsPerPage,
-							type: "primary",
-						}}
-						onObjectClick={(data, col) => {
-							const fieldConfig = fields.find(f => f.id === col.key);
-							actions.handleViewDetail(data, fieldConfig?.structure);
-						}}
-					/>
-				)}
-			</Sheet>
-
-			<Modal
-				isOpen={modal.isOpen}
-				onClose={actions.closeModal}
-				title={`${modal.mode === 'VIEW' ? 'View' : modal.mode === 'EDIT' ? 'Edit' : 'New'} Curriculum`}
-				size="md"
-			>
 				<Form
-					key={modal.isOpen ? "open" : "closed"}
-					fields={fields}
-					value={value}
-					onChange={actions.onChange}
-					onSubmit={isViewMode ? undefined : actions.handleSubmit}
-					onCancel={actions.closeModal}
-					submitText={modal.mode === 'EDIT' ? 'Save changes' : 'Add Curriculum'}
-					isLoading={isSubmitting}
+					fields={personalDataFields}
+					value={personalData.value}
+					onChange={actions.handleChangePersonalData}
+					onSubmit={actions.handleSavePersonalData}
+					submitText="Save"
+					isLoading={personalData.status === "SAVING"}
 					triggerPopUp={actions.openPopUp}
 				/>
-			</Modal>
+			</Sheet>
 
-			<Modal
-				isOpen={confirm.isOpen}
-				onClose={actions.closeConfirm}
-				title={confirm.title}
-			>
-				<p
-					style={{
-						marginTop: 0,
-						marginBottom: "1.5rem",
-						color: "var(--color-foreground-muted)",
-						lineHeight: 1.5,
-					}}
-				>
-					{confirm.text}
-				</p>
-				<div
-					style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}
-				>
-					<Button
-						text="Cancel"
-						type="neutral"
-						outline={true}
-						onClick={actions.closeConfirm}
-					/>
-					<Button
-						text="Confirm"
-						type="primary"
-						onClick={confirm.onConfirm}
-						isLoading={isSubmitting}
-					/>
+			<Sheet className="curriculum-section" elevation={1}>
+				<div className="curriculum-section__header">
+					<h2 className="curriculum-section__title">Profile</h2>
+					<SectionStatus status={profile.status} pendingSync={profile.pendingSync} />
 				</div>
-			</Modal>
+				<Form
+					fields={profileFields}
+					value={profile.value}
+					onChange={actions.handleChangeProfile}
+					onSubmit={actions.handleSaveProfile}
+					submitText="Save"
+					isLoading={profile.status === "SAVING"}
+					triggerPopUp={actions.openPopUp}
+				/>
+			</Sheet>
+
+			<Sheet className="curriculum-section" elevation={1}>
+				<div className="curriculum-section__header">
+					<h2 className="curriculum-section__title">Skills</h2>
+					<SectionStatus status={skills.status} pendingSync={skills.pendingSync} />
+				</div>
+				<Form
+					fields={skillsFields}
+					value={skills.value}
+					onChange={actions.handleChangeSkills}
+					onSubmit={actions.handleSaveSkills}
+					submitText="Save"
+					isLoading={skills.status === "SAVING"}
+					triggerPopUp={actions.openPopUp}
+				/>
+			</Sheet>
+
+			<EntryListSection
+				title="Education"
+				fields={educationFields}
+				entries={education.entries}
+				emptyText="No education entries yet."
+				renderPrimary={(entry) => `${entry.title} — ${entry.institution}`}
+				renderSecondary={(entry) => `${entry.startDate?.slice(0, 10) || ""} – ${entry.endDate?.slice(0, 10) || "Present"}`}
+				isSaving={education.status === "SAVING"}
+				pendingSync={education.pendingSync}
+				pendingEntry={education.pendingEntry}
+				disabled={!curriculumId}
+				disabledHint="Save your Personal Data first to add education entries."
+				onSave={actions.handleSaveEducation}
+				onRemove={actions.handleRemoveEducation}
+				triggerPopUp={actions.openPopUp}
+			/>
+
+			<EntryListSection
+				title="Experience"
+				fields={experienceFields}
+				entries={experience.entries}
+				emptyText="No experience entries yet."
+				renderPrimary={(entry) => `${entry.position} — ${entry.company}`}
+				renderSecondary={(entry) => `${entry.startDate?.slice(0, 10) || ""} – ${entry.endDate?.slice(0, 10) || "Present"}`}
+				isSaving={experience.status === "SAVING"}
+				pendingSync={experience.pendingSync}
+				pendingEntry={experience.pendingEntry}
+				disabled={!curriculumId}
+				disabledHint="Save your Personal Data first to add experience entries."
+				onSave={actions.handleSaveExperience}
+				onRemove={actions.handleRemoveExperience}
+				triggerPopUp={actions.openPopUp}
+			/>
+
+			<EntryListSection
+				title="Certificates"
+				fields={certificateFields}
+				entries={certificate.entries}
+				emptyText="No certificates yet."
+				renderPrimary={(entry) => entry.name}
+				renderSecondary={(entry) => entry.date?.slice(0, 10)}
+				isSaving={certificate.status === "SAVING"}
+				pendingSync={certificate.pendingSync}
+				pendingEntry={certificate.pendingEntry}
+				disabled={!curriculumId}
+				disabledHint="Save your Personal Data first to add certificates."
+				onSave={actions.handleSaveCertificate}
+				onRemove={actions.handleRemoveCertificate}
+				triggerPopUp={actions.openPopUp}
+			/>
 
 			<PopUp
 				isOpen={popUp.isOpen}
@@ -176,7 +148,7 @@ const Curriculum = () => {
 				type={popUp.type}
 				orientation="bottom-right"
 				text={popUp.text}
-				duration={10000}
+				duration={6000}
 			/>
 		</div>
 	);

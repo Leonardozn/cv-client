@@ -681,3 +681,87 @@ Artifact Contracts → "el cv-client solicita la generación del PDF vía cv-ser
 
 Resultado: Un PDF descargable con el diseño elegido, o un 404 (no encontrado) si el curriculum no
 es de quien llama.
+
+## 10. Endpoints y Acceso a los Servicios
+
+Complementa la Sección 7 (que describe cada contrato en prosa) con un índice plano de todos los
+endpoints de auth-service y cv-service que cv-client conoce y puede llamar, más la configuración
+con la que los alcanza.
+
+### Configuración de acceso (variables de entorno de Vite)
+
+cv-client compone la URL de cada servicio como `<HOST><PATH>`, leído de `src/config/environment`:
+
+| Servicio     | Variable de host          | Variable de prefijo      | Valor efectivo (`cv-client/.env`) |
+| ------------ | -------------------------- | -------------------------- | ---------------------------------- |
+| auth-service | `VITE_AUTH_API_HOST`       | `VITE_AUTH_API_PATH`       | `http://localhost:3000` + `/api` (default) |
+| cv-service   | `VITE_CV_API_HOST`         | `VITE_CV_API_PATH`         | `http://localhost:3001` + `/api` (default) |
+
+`VITE_AUTH_STATIC_IMAGES_HOST`/`VITE_AUTH_IMAGES_API_PATH` y
+`VITE_CV_STATIC_IMAGES_HOST`/`VITE_CV_IMAGES_API_PATH` resuelven, de la misma forma, la URL desde
+la que se sirven los archivos subidos (p. ej. `Curriculum.photo`) de cada servicio.
+
+Todas las solicitudes a rutas protegidas envían `Authorization: Bearer <accessToken>`; ante un 401
+por access token expirado, la conexión reintenta una vez tras renovar contra
+`<AUTH_API_HOST><AUTH_API_PATH>/auth/refresh` (nunca contra cv-service, que no expone su propia
+ruta de refresh — ver Protocolo de autenticación).
+
+### Endpoints de auth-service (prefijo `<AUTH_API_HOST><AUTH_API_PATH>`)
+
+| Método | Ruta                     | Operación                                    |
+| ------ | ------------------------ | --------------------------------------------- |
+| POST   | `/auth/register`         | Registrar usuario                             |
+| POST   | `/auth/login`            | Iniciar sesión                                |
+| POST   | `/auth/refresh`          | Renovar sesión (access + refresh)             |
+| POST   | `/auth/logout`           | Cerrar sesión                                 |
+| POST   | `/auth/change-password`  | Cambiar contraseña (usuario autenticado)      |
+| POST   | `/auth/forgot-password`  | Solicitar recuperación de contraseña          |
+| POST   | `/auth/reset-password`   | Restablecer contraseña con token de recuperación |
+| POST   | `/auth/deactivate`       | Desactivar la propia cuenta                   |
+| GET    | `/user`                  | Listar usuarios (CRUD estándar del modelo `User`; sin un proceso de negocio propio documentado — solo admin) |
+| POST   | `/user`                  | Crear usuario (CRUD estándar; el alta pública real es `/auth/register`, no esta ruta) |
+| GET    | `/user/:id`              | Leer un usuario                               |
+| PATCH  | `/user/:id`              | Editar perfil (`name`/`email`) o reactivar una cuenta (`{ active: true }`, admin) |
+| PUT    | `/user/:id`              | Reemplazar usuario (CRUD estándar; sin proceso de negocio propio) |
+| DELETE | `/user/:id`              | Eliminar usuario (CRUD estándar; la baja de negocio es `/auth/deactivate`, no esta ruta) |
+
+> Las filas de `/user` marcadas "CRUD estándar" existen porque `User` es una UI-model generada en
+> cv-client, pero solo `GET/PATCH /user/:id` tienen un contrato y un proceso de negocio
+> documentados (ver Sección 7 y Sección 9); el resto no debe exponerse en la UI de un usuario
+> normal salvo que se decida construir una pantalla de administración de usuarios (fuera del
+> alcance definido hoy).
+
+### Endpoints de cv-service (prefijo `<CV_API_HOST><CV_API_PATH>`)
+
+| Método | Ruta                              | Operación                                      |
+| ------ | ---------------------------------- | ------------------------------------------------ |
+| POST   | `/curriculum`                     | Crear el Curriculum del usuario autenticado     |
+| GET    | `/curriculum`                     | Listar (a lo sumo un Curriculum por usuario)    |
+| GET    | `/curriculum/:id`                 | Leer un Curriculum                              |
+| PATCH  | `/curriculum/:id`                 | Actualizar el Curriculum (incluye foto, file upload) |
+| PUT    | `/curriculum/:id`                 | Reemplazar el Curriculum                        |
+| DELETE | `/curriculum/:id`                 | Eliminar el Curriculum                          |
+| POST   | `/curriculum/:id/generate-pdf`    | Generar y descargar el PDF                      |
+| POST   | `/education`                      | Crear una entrada de Education                  |
+| GET    | `/education`                      | Listar entradas de Education                    |
+| GET    | `/education/:id`                  | Leer una entrada de Education                   |
+| PATCH  | `/education/:id`                  | Actualizar una entrada de Education             |
+| PUT    | `/education/:id`                  | Reemplazar una entrada de Education             |
+| DELETE | `/education/:id`                  | Eliminar una entrada de Education               |
+| POST / GET / GET :id / PATCH / PUT / DELETE | `/experience`, `/experience/:id` | CRUD de Experience (mismas seis operaciones que Education) |
+| POST / GET / GET :id / PATCH / PUT / DELETE | `/certificate`, `/certificate/:id` | CRUD de Certificate (mismas seis operaciones que Education) |
+| GET    | `/skill`                          | Listar Skill activas (lectura pública)          |
+| POST   | `/skill`                          | Crear Skill (admin)                             |
+| GET    | `/skill/:id`                      | Leer una Skill                                  |
+| PATCH  | `/skill/:id`                      | Actualizar una Skill (admin)                    |
+| PUT    | `/skill/:id`                      | Reemplazar una Skill (admin)                    |
+| DELETE | `/skill/:id`                      | Eliminar una Skill (admin)                      |
+| GET    | `/template`                       | Listar Template activos (lectura pública)       |
+| POST   | `/template`                       | Crear Template (admin)                          |
+| GET    | `/template/:id`                   | Leer un Template                                |
+| PATCH  | `/template/:id`                   | Actualizar un Template (admin)                  |
+| PUT    | `/template/:id`                   | Reemplazar un Template (admin)                  |
+| DELETE | `/template/:id`                   | Eliminar un Template (admin)                    |
+
+Todas las rutas de `/skill` y `/template` distintas de `GET` exigen rol admin (ver Artifact
+Contracts → "el cv-client obtiene los catálogos (Skill, Template) vía cv-service").

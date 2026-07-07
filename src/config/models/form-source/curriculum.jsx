@@ -1,103 +1,60 @@
-import {
-	CV_API_HOST,
-	CV_STATIC_IMAGES_HOST,
-	CV_IMAGES_API_PATH,
-} from "../../environment";
+import { CV_API_HOST, CV_STATIC_IMAGES_HOST, CV_IMAGES_API_PATH } from "../../environment";
 
-export default [
-	{
-		id: "user",
-		label: "User Id",
-		placeholder: "Owner user id",
-		input: "text",
-		value: '',
-		required: true,
-	},
-	{
-		id: "fullName",
-		label: "Full Name",
-		placeholder: "Full name",
-		input: "text",
-		value: '',
-		required: true,
-	},
+export const personalDataFields = [
+	{ id: "fullName", label: "Full Name", placeholder: "Full name", input: "text", required: true },
 	{
 		id: "headline",
 		label: "Headline",
-		placeholder: "Professional headline",
-		input: "text",
-		value: '',
-		required: true,
+		input: "sublist",
+		outputType: "string",
+		structure: [
+			{ id: "name", label: "Headline", placeholder: "e.g. Software Engineer", input: "text", required: true },
+		],
 	},
+	{ id: "city", label: "City", placeholder: "City", input: "text", required: true },
+	{ id: "state", label: "State", placeholder: "State / province", input: "text", required: true },
+	{ id: "country", label: "Country", placeholder: "Country", input: "text", required: true },
 	{
-		id: "city",
-		label: "City",
-		placeholder: "City",
-		input: "text",
-		value: '',
-		required: true,
+		id: "phones",
+		label: "Phones",
+		input: "sublist",
+		outputType: "string",
+		structure: [
+			{ id: "name", label: "Phone", placeholder: "e.g. +57 300 000 0000", input: "text", required: true },
+		],
 	},
 	{
 		id: "photo",
 		label: "Photo",
 		input: "file",
-		value: '',
-		file: true,
 		accept: "image/*",
 		apiHost: CV_API_HOST,
 		imageHost: CV_STATIC_IMAGES_HOST,
 		apiPath: CV_IMAGES_API_PATH,
 	},
 	{
-		id: "profileSummary",
-		label: "Profile Summary",
-		placeholder: "Profile summary",
-		input: "text",
-		value: '',
-		required: true,
+		id: "contactLinks",
+		label: "Contact Links",
+		input: "sublist",
+		structure: [
+			{ id: "label", label: "Label", placeholder: "e.g. LinkedIn, GitHub", input: "text", required: true },
+			{ id: "url", label: "URL", placeholder: "Link URL", input: "text", required: true },
+		],
 	},
+];
+
+export const profileFields = [
+	{ id: "profileSummary", label: "Profile Summary", placeholder: "Tell us about your professional background", input: "text", required: true },
+];
+
+export const skillsFields = [
 	{
 		id: "skills",
 		label: "Skills",
 		input: "sublist",
-		value: [],
-	},
-	{
-		id: "contactLinks",
-		label: "Contact Links",
-		input: "sublist",
-		value: [],
+		outputType: "string",
 		structure: [
-			{
-				id: "label",
-				label: "Label",
-				placeholder: "e.g. LinkedIn, GitHub",
-				input: "text",
-				value: '',
-				required: true,
-			},
-			{
-				id: "url",
-				label: "URL",
-				placeholder: "Link URL",
-				input: "text",
-				value: '',
-				required: true,
-			},
+			{ id: "name", label: "Skill", placeholder: "e.g. Node.js", input: "text", required: true },
 		],
-	},
-	{
-		id: "createdAt",
-		label: "Created At",
-		placeholder: "Created at",
-		input: "datetime",
-		value: '',
-	},
-	{
-		id: "updatedAt",
-		label: "Updated At",
-		placeholder: "Updated at",
-		input: "datetime",
-		value: '',
 	},
 ];

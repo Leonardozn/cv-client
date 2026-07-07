@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import apiMethods from "./auth";
 import { preparePayload } from "./map-methods";
 import loginFormConfig from "../models/form-source/login";
-import { ROOT_PATH } from "../router/paths";
+import { HOME_PATH } from "../router/paths";
 
 export const useLoginController = () => {
 	const navigate = useNavigate();
@@ -24,7 +24,7 @@ export const useLoginController = () => {
 		try {
 			const payload = preparePayload(formData, loginFormConfig);
 			await apiMethods.LOGIN_USER.method(payload);
-			navigate(ROOT_PATH);
+			navigate(HOME_PATH);
 		} catch (error) {
 			const statusCode = error.response?.data?.statusCode;
 			const message =
