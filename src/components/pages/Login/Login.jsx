@@ -3,10 +3,11 @@ import Form from "../../customs/Form/Form";
 import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
 import { useLoginController } from "../../../config/controllers/useLoginController";
+import { REGISTER_PATH } from "../../../config/router/paths";
 import "./Login.css";
 
 const Login = () => {
-	const { fields, isSubmitting, popUp, actions } = useLoginController();
+	const { fields, value, isSubmitting, popUp, actions } = useLoginController();
 
 	return (
 		<div className="login-page">
@@ -15,6 +16,8 @@ const Login = () => {
 
 				<Form
 					fields={fields}
+					value={value}
+					onChange={actions.onChange}
 					onSubmit={actions.handleSubmit}
 					submitText="Sign in"
 					isLoading={isSubmitting}
@@ -22,7 +25,7 @@ const Login = () => {
 				/>
 
 				<p className="login-footer">
-					Don't have an account? <Link to="/admin/register">Create one</Link>
+					Don't have an account? <Link to={REGISTER_PATH}>Create one</Link>
 				</p>
 			</Sheet>
 

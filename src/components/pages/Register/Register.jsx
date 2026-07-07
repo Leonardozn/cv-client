@@ -3,10 +3,11 @@ import Form from "../../customs/Form/Form";
 import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
 import { useRegisterController } from "../../../config/controllers/useRegisterController";
+import { LOGIN_PATH } from "../../../config/router/paths";
 import "./Register.css";
 
 const Register = () => {
-	const { fields, registered, isSubmitting, popUp, actions } = useRegisterController();
+	const { fields, value, registered, isSubmitting, popUp, actions } = useRegisterController();
 
 	return (
 		<div className="register-page">
@@ -15,19 +16,21 @@ const Register = () => {
 
 				{registered ? (
 					<p className="register-success">
-						Your account was created successfully. You can now <Link to="/admin/login">sign in</Link>.
+						Your account was created successfully. You can now <Link to={LOGIN_PATH}>sign in</Link>.
 					</p>
 				) : (
 					<>
 						<Form
 							fields={fields}
+							value={value}
+							onChange={actions.onChange}
 							onSubmit={actions.handleSubmit}
 							submitText="Create account"
 							isLoading={isSubmitting}
 							triggerPopUp={actions.openPopUp}
 						/>
 						<p className="register-footer">
-							Already have an account? <Link to="/admin/login">Sign in</Link>
+							Already have an account? <Link to={LOGIN_PATH}>Sign in</Link>
 						</p>
 					</>
 				)}

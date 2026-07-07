@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import { ROOT_PATH, MAIN_PATH, REGISTER_PATH, LOGIN_PATH } from "./paths";
 import Landing from "../../components/pages/Landing/Landing";
 import Register from "../../components/pages/Register/Register";
 import Login from "../../components/pages/Login/Login";
@@ -15,19 +16,19 @@ import Skill from "../../components/pages/Skill/Skill";
 import Template from "../../components/pages/Template/Template";
 const router = createBrowserRouter([
 	{
-		path: "/admin",
+		path: ROOT_PATH,
 		element: <Landing />,
 	},
 	{
-		path: "/admin/register",
+		path: REGISTER_PATH,
 		element: <Register />,
 	},
 	{
-		path: "/admin/login",
+		path: LOGIN_PATH,
 		element: <Login />,
 	},
 	{
-		path: "admin",
+		path: MAIN_PATH,
 		element: <Main />,
 		children: [
 			{

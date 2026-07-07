@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import apiMethods from "./auth";
 import { preparePayload } from "./map-methods";
 import loginFormConfig from "../models/form-source/login";
+import { ROOT_PATH } from "../router/paths";
 
 export const useLoginController = () => {
 	const navigate = useNavigate();
 	const [status, setStatus] = useState("IDLE");
 	const [popUp, setPopUp] = useState({ isOpen: false, type: "info", text: "" });
+	const [formValue, setFormValue] = useState({});
 
 	const isSubmitting = status === "SUBMITTING";
 
@@ -22,7 +24,7 @@ export const useLoginController = () => {
 		try {
 			const payload = preparePayload(formData, loginFormConfig);
 			await apiMethods.LOGIN_USER.method(payload);
-			navigate("/admin");
+			navigate(ROOT_PATH);
 		} catch (error) {
 			const statusCode = error.response?.data?.statusCode;
 			const message =
@@ -36,12 +38,14 @@ export const useLoginController = () => {
 
 	return {
 		fields: loginFormConfig,
+		value: formValue,
 		isSubmitting,
 		popUp,
 		actions: {
 			handleSubmit,
 			closePopUp,
 			openPopUp: triggerPopUp,
+			onChange: (key, val) => setFormValue((prev) => ({ ...prev, [key]: val })),
 		},
 	};
 };

@@ -7,6 +7,7 @@ export const useRegisterController = () => {
 	const [status, setStatus] = useState("IDLE");
 	const [popUp, setPopUp] = useState({ isOpen: false, type: "info", text: "" });
 	const [registered, setRegistered] = useState(false);
+	const [formValue, setFormValue] = useState({});
 
 	const isSubmitting = status === "SUBMITTING";
 
@@ -36,6 +37,7 @@ export const useRegisterController = () => {
 
 	return {
 		fields: registerFormConfig,
+		value: formValue,
 		registered,
 		isSubmitting,
 		popUp,
@@ -43,6 +45,7 @@ export const useRegisterController = () => {
 			handleSubmit,
 			closePopUp,
 			openPopUp: triggerPopUp,
+			onChange: (key, val) => setFormValue((prev) => ({ ...prev, [key]: val })),
 		},
 	};
 };
