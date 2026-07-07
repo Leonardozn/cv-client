@@ -98,6 +98,19 @@ export const REMOVE_CURRICULUM = {
 	},
 };
 
+// Binary download, not the standard JSON envelope: responseType "blob" makes
+// axios return the raw PDF bytes as response.data (or a JSON-in-a-Blob error
+// body on failure — see parseBlobError in useHomeController).
+export const GENERATE_PDF = {
+	name: "GENERATE_PDF",
+	method: async (id, data = {}, config = basePathConfig) => {
+		const response = await config.post(`${apiPath}/curriculum/${id}/generate-pdf`, data, {
+			responseType: "blob",
+		});
+		return response.data;
+	},
+};
+
 export const GET_EDUCATION_LIST = {
 	name: "GET_EDUCATION_LIST",
 	method: async (params = {}, config = basePathConfig) => {
@@ -470,4 +483,5 @@ export default {
 	UPDATE_CURRICULUM,
 	REPLACE_CURRICULUM,
 	REMOVE_CURRICULUM,
+	GENERATE_PDF,
 };
