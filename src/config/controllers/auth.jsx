@@ -13,8 +13,9 @@ const publicConnection = createApiConnection({
 const handleRefresh = async () => {
 	const refreshToken = localStorage.getItem("refreshToken");
 	const response = await publicConnection.post(`${apiPath}/auth/refresh`, { refreshToken });
-	const { accessToken, refreshToken: newRefreshToken } = response.data?.content || {};
-	if (accessToken) localStorage.setItem("accessToken", accessToken);
+	// auth-service's refresh contract returns the access token as "token", not "accessToken"
+	const { token, refreshToken: newRefreshToken } = response.data?.content || {};
+	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
 	return response;
 };
@@ -26,7 +27,7 @@ export const basePathConfig = createApiConnection({
 		Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
 	}),
 	onRefresh: handleRefresh,
-	onExpired: APP_URL,
+	onExpired: `${APP_URL}/login`,
 });
 
 export const REGISTER_USER = {
