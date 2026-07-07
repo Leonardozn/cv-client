@@ -55,6 +55,14 @@ export const LOGIN_USER = {
 	},
 };
 
+export const LOGOUT_USER = {
+	name: "LOGOUT_USER",
+	method: async (config = basePathConfig) => {
+		const response = await config.post(`${apiPath}/auth/logout`);
+		return response.data;
+	},
+};
+
 export const GET_USER_LIST = {
 	name: "GET_USER_LIST",
 	method: async (params = {}, config = basePathConfig) => {
@@ -125,6 +133,7 @@ export const REMOVE_USER = {
 export default {
 	REGISTER_USER,
 	LOGIN_USER,
+	LOGOUT_USER,
 	GET_USER_LIST,
 	ADD_USER,
 	FIND_ONE_USER,

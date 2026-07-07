@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AUTH_STATES } from "../environment";
 
-const clearSession = () => {
+export const clearSession = () => {
 	localStorage.removeItem("accessToken");
 	localStorage.removeItem("refreshToken");
 };
