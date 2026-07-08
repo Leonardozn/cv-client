@@ -28,7 +28,7 @@ const Navbar = ({ isOpen, toggleSidebar }) => {
 				</p>
 				<div className="navbar-logout-confirm-actions">
 					<Button text="Cancel" type="neutral" outline={true} onClick={actions.closeConfirm} disabled={isSubmitting} />
-					<Button text="Log out" type="error" onClick={actions.confirmLogout} disabled={isSubmitting} />
+					<Button text="Log out" type="primary" onClick={actions.confirmLogout} disabled={isSubmitting} />
 				</div>
 			</Modal>
 		</header>
