@@ -85,6 +85,17 @@ export const CHANGE_PASSWORD = {
 	},
 };
 
+// Step 2: confirms the 6-digit code emailed in step 1 and actually applies the
+// new password. A wrong code is also a 401 here (counts as a failed attempt),
+// so this reuses changePasswordConnection for the same reason as step 1.
+export const CHANGE_PASSWORD_VERIFY = {
+	name: "CHANGE_PASSWORD_VERIFY",
+	method: async (data, config = changePasswordConnection) => {
+		const response = await config.post(`${apiPath}/auth/change-password/verify`, data);
+		return response.data;
+	},
+};
+
 export const GET_USER_LIST = {
 	name: "GET_USER_LIST",
 	method: async (params = {}, config = basePathConfig) => {
@@ -157,6 +168,7 @@ export default {
 	LOGIN_USER,
 	LOGOUT_USER,
 	CHANGE_PASSWORD,
+	CHANGE_PASSWORD_VERIFY,
 	GET_USER_LIST,
 	ADD_USER,
 	FIND_ONE_USER,

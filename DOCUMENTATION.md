@@ -36,6 +36,11 @@ resuelve con el token de auth-service enviado como `Authorization: Bearer <token
 > (formación, experiencia, certificados, habilidades, enlaces) permiten agregar/editar/eliminar
 > varias entradas. Esto es una decisión de presentación del cv-client: los contratos con
 > cv-service (CRUD por sección + generación de PDF) no cambian.
+>
+> Nota de UI — cambio de contraseña en dos pasos: al enviar la contraseña actual y la nueva,
+> auth-service NO la aplica de inmediato — envía un código de verificación de 6 dígitos por email
+> y solo la aplica cuando ese código se confirma. La pantalla de "cambiar contraseña" debe tener un
+> segundo paso que pida el código antes de dar el cambio por hecho.
 
 ## 4. Task List
 
@@ -51,32 +56,37 @@ resuelve con el token de auth-service enviado como `Authorization: Bearer <token
    que, ante un 401 por access token expirado, renueva con el refresh token y reintenta la
    solicitud; si el refresh también expiró, cierra sesión y redirige al login.
 7. Implementar el contrato: el cv-client cierra sesión vía auth-service.
-8. Implementar el contrato: el cv-client cambia la contraseña (usuario autenticado) vía
-   auth-service.
-9. Implementar el contrato: el cv-client solicita recuperar contraseña vía auth-service.
-10. Implementar el contrato: el cv-client restablece la contraseña con un token de recuperación
+8. Implementar el contrato: el cv-client cambia la contraseña vía auth-service, en dos pasos —
+   solicitar el cambio (`POST /auth/change-password`) y confirmarlo con el código de verificación
+   enviado por email (`POST /auth/change-password/verify`).
+9. Implementar el contrato: el cv-client resuelve el nombre de un Role vía auth-service
+   (`GET /role/:id`) — necesario porque `user.role` llega como el id del Role en toda respuesta
+   que recibe cv-client (registro, login, refresh, cuenta); es la única forma de saber si el
+   usuario autenticado es admin para la tarea 20.
+10. Implementar el contrato: el cv-client solicita recuperar contraseña vía auth-service.
+11. Implementar el contrato: el cv-client restablece la contraseña con un token de recuperación
     vía auth-service — página en la ruta `/reset-password` que lee el `token` del query string
     (coincide con `PASSWORD_RESET_URL_BASE` del email).
-11. Implementar el contrato: el cv-client gestiona su cuenta vía auth-service (editar perfil,
+12. Implementar el contrato: el cv-client gestiona su cuenta vía auth-service (editar perfil,
     desactivar cuenta).
-12. Implementar el contrato: el cv-client gestiona un Curriculum vía cv-service (CRUD, con la
+13. Implementar el contrato: el cv-client gestiona un Curriculum vía cv-service (CRUD, con la
     foto de perfil como file upload).
-13. Implementar el contrato: el cv-client gestiona entradas de Education / Experience /
+14. Implementar el contrato: el cv-client gestiona entradas de Education / Experience /
     Certificate vía cv-service (CRUD).
-14. Implementar el contrato: el cv-client obtiene los catálogos (Skill, Template) vía cv-service
+15. Implementar el contrato: el cv-client obtiene los catálogos (Skill, Template) vía cv-service
     (lectura pública; escritura restringida a rol admin).
-15. Implementar el contrato: el cv-client solicita la generación del PDF vía cv-service.
-16. Implementar el Proceso "Guardar Datos del Curriculum" como el asistente por pasos (wizard) de
-    7 pasos, sobre las tareas 12–13: navegación adelante/atrás, indicador de progreso, listas
+16. Implementar el contrato: el cv-client solicita la generación del PDF vía cv-service.
+17. Implementar el Proceso "Guardar Datos del Curriculum" como el asistente por pasos (wizard) de
+    7 pasos, sobre las tareas 13–14: navegación adelante/atrás, indicador de progreso, listas
     flexibles (enlaces de contacto, habilidades, formación, experiencia, certificados) y
     validación por paso.
-17. Implementar el Proceso "Autocompletar Habilidades y Elegir Diseño": sugerencias de Skill en
+18. Implementar el Proceso "Autocompletar Habilidades y Elegir Diseño": sugerencias de Skill en
     el paso de habilidades y selector de Template en el paso de diseño y descarga.
-18. Implementar el Proceso "Generar el PDF del CV": botón de descarga en el paso final,
+19. Implementar el Proceso "Generar el PDF del CV": botón de descarga en el paso final,
     manejando la respuesta binaria `application/pdf`.
-19. Implementar el Proceso "Administrar Catálogos" (admin): pantalla de administración para
-    crear/editar/desactivar Skill y Template, visible solo para el rol admin (el backend
-    responde 403 a quien no lo tenga).
+20. Implementar el Proceso "Administrar Catálogos" (admin): pantalla de administración para
+    crear/editar/desactivar Skill y Template, visible solo para el rol admin — resuelto vía la
+    tarea 9, no leyendo `user.role` directamente — (el backend responde 403 a quien no lo tenga).
 
 ## 5. Artifacts
 
@@ -183,6 +193,29 @@ realizar también un admin; el admin únicamente suma las capacidades exclusivas
 catálogos Skill/Template). cv-client debe ocultar o inhabilitar en su UI las acciones exclusivas
 de admin para quien no tenga ese rol, sabiendo que el backend igual las rechaza con 403.
 
+**`user.role` es un id, no un nombre, salvo en `/auth/validate`.** `User.role` es una referencia a
+`Role` (ver Data Models); en todas las respuestas que recibe **cv-client** (registro, login,
+refresh, editar perfil/reactivar) `role` viaja como el **id crudo** del Role, no como `"admin"` /
+`"user"`. Solo la ruta interna `POST /auth/validate` —que usa cv-service, no cv-client— resuelve
+`role` al **nombre** del Role, porque es el contrato del que depende la autorización de recursos
+en cv-service. Para que cv-client sepa si el usuario autenticado es admin (y así decidir si
+muestra la administración de catálogos), debe resolver ese id llamando a `GET /role/:id` (ver
+contrato abajo) — nunca comparar `user.role` directamente contra `'admin'`.
+
+### Contrato: el cv-client resuelve un Role vía auth-service
+
+- Llamador: cv-client · Llamado: auth-service
+- `GET /role/:id` — lectura estándar (ver Data Models → Role para los campos expuestos). Requiere
+  el header `Authorization: Bearer <token>`; cualquier usuario autenticado puede leer un Role
+  (esta lectura no exige rol admin), pero sí requiere sesión válida.
+- Respuesta: `{ success, message, statusCode, content: <Role> }`; `content: null` con
+  `statusCode` 400 si el id no corresponde a ningún Role.
+- Uso: cv-client llama esta ruta con el `role` (id) recibido en `user` tras registrarse, iniciar
+  sesión, renovar la sesión o editar el perfil, para obtener `Role.name` y decidir si el usuario
+  es admin. Las mutaciones de `Role` (`POST`/`PATCH`/`PUT`/`DELETE`) existen en auth-service pero
+  exigen rol admin y no tienen un proceso de negocio ni pantalla propia documentados hoy para
+  cv-client (ver Sección 10).
+
 ### Contrato: el cv-client registra un usuario vía auth-service
 
 - Llamador: cv-client · Llamado: auth-service
@@ -224,13 +257,25 @@ de admin para quien no tenga ese rol, sabiendo que el backend igual las rechaza 
 
 ### Contrato: el cv-client cambia la contraseña (usuario autenticado) vía auth-service
 
+Flujo en dos pasos: el paso 1 solo valida la contraseña actual y envía un código de verificación
+por email; el cambio real ocurre en el paso 2, al confirmar ese código. Esto asegura que quien
+solicita el cambio es dueño de la cuenta (email), además de estar logueado.
+
 - Llamador: cv-client · Llamado: auth-service
-- `POST /auth/change-password` (acción personalizada, no CRUD estándar)
-- Requiere el header `Authorization: Bearer <token>`.
-- Cuerpo de la solicitud: `{ currentPassword: <string>, newPassword: <string> }`
-- Respuesta: `{ success, message, statusCode, content: null }` en caso de éxito; `statusCode` 401
-  si `currentPassword` no coincide. Al cambiarla, auth-service revoca las demás sesiones del
-  usuario.
+- **Paso 1** — `POST /auth/change-password` (acción personalizada). Requiere
+  `Authorization: Bearer <token>`.
+  - Cuerpo de la solicitud: `{ currentPassword: <string>, newPassword: <string> }`
+  - Respuesta: `{ success, message, statusCode, content: null }` (200); `statusCode` 401 si
+    `currentPassword` no coincide. **No cambia la contraseña todavía**: genera un código de
+    verificación de 6 dígitos y lo envía por email vía Resend a la dirección del propio usuario.
+- **Paso 2** — `POST /auth/change-password/verify` (acción personalizada). Requiere
+  `Authorization: Bearer <token>` (la misma sesión del paso 1).
+  - Cuerpo de la solicitud: `{ code: <string> }`
+  - Respuesta: `{ success, message, statusCode, content: null }` (200) y aplica la nueva
+    contraseña, revocando las demás sesiones del usuario (deja viva la actual); `statusCode` 400
+    si no hay un cambio pendiente o el código expiró; `statusCode` 401 si el código no coincide
+    (cuenta como intento fallido) — tras un número máximo de intentos fallidos el código se
+    invalida y hay que solicitar uno nuevo desde el paso 1.
 
 ### Contrato: el cv-client solicita recuperar contraseña vía auth-service
 
@@ -321,13 +366,16 @@ de admin para quien no tenga ese rol, sabiendo que el backend igual las rechaza 
 
 ##### Role
 
-Los roles son datos configurables: se pueden agregar nuevos roles sin cambiar código.
+Los roles son datos configurables: se pueden agregar nuevos roles sin cambiar código. Mutar un
+Role (crear/reemplazar/editar/eliminar) exige rol admin; leerlo (`GET /role`, `GET /role/:id`)
+solo exige estar autenticado, cualquier rol.
 
-| Campo  | Tipo    | Requerido | Descripción                                |
-| ------ | ------- | --------- | ------------------------------------------ |
-| id     | id      | sí        | Identificador único del rol                |
-| name   | string  | sí        | Nombre del rol (p. ej., user, admin)       |
-| active | boolean | sí        | Si el rol puede asignarse actualmente      |
+| Campo       | Tipo    | Requerido | Descripción                                                                 |
+| ----------- | ------- | --------- | ---------------------------------------------------------------------------- |
+| id          | id      | sí        | Identificador único del rol                                                |
+| name        | string  | sí        | Nombre del rol (p. ej., user, admin)                                       |
+| active      | boolean | sí        | Si el rol puede asignarse actualmente                                      |
+| maxSessions | number  | no        | Límite de sesiones concurrentes por usuario con este rol. Vacío o <= 0 = sin límite; al superarlo, el login elimina la sesión más antigua |
 
 ##### User
 
@@ -337,7 +385,7 @@ Los roles son datos configurables: se pueden agregar nuevos roles sin cambiar c�
 | name      | string           | sí        | Nombre visible del usuario     |
 | email     | string           | sí        | Email de inicio de sesión, único|
 | password  | string           | sí        | Contraseña hasheada            |
-| role      | reference → Role | sí        | Rol asignado al usuario        |
+| role      | reference → Role | sí        | Rol asignado al usuario. **En toda respuesta que recibe cv-client (registro, login, refresh, editar perfil/reactivar), este campo llega como el id del Role, no su nombre** — resolver con `GET /role/:id` (ver Artifact Contracts) para saber si es admin |
 | active    | boolean          | sí        | Si la cuenta está activa (una cuenta desactivada no puede iniciar sesión) |
 | createdAt | datetime         | sí        | Fecha de registro              |
 
@@ -369,6 +417,24 @@ Token de un solo uso para restablecer la contraseña, enviado por email vía Res
 | token     | string           | sí        | Token opaco incluido en el enlace del email      |
 | expiresAt | datetime         | sí        | Fecha de expiración del token                    |
 | used      | boolean          | sí        | Si el token ya fue usado (no se puede reutilizar)|
+
+##### ChangePasswordVerificationCode
+
+Código de un solo uso (6 dígitos) para confirmar un cambio de contraseña (ver Artifact Contracts
+→ "el cv-client cambia la contraseña... vía auth-service", paso 2), enviado por email vía Resend.
+Guarda la nueva contraseña ya hasheada para no tener que reenviarla en el paso 2. cv-client no lo
+gestiona como UI-model (no tiene CRUD propio expuesto), solo dispara el flujo a través del
+contrato de cambio de contraseña.
+
+| Campo           | Tipo             | Requerido | Descripción                                              |
+| --------------- | ---------------- | --------- | --------------------------------------------------------- |
+| id              | id               | sí        | Identificador único del código                            |
+| user            | reference → User | sí        | Usuario que solicitó el cambio                             |
+| code            | string           | sí        | Código de verificación de 6 dígitos                        |
+| newPasswordHash | string           | sí        | Nueva contraseña, ya hasheada                              |
+| expiresAt       | datetime         | sí        | Fecha de expiración del código                             |
+| used            | boolean          | sí        | Si el código ya fue usado o invalidado (no reutilizable)   |
+| attempts        | number           | sí        | Intentos fallidos de verificación (hasta un máximo configurado en auth-service) |
 
 ### cv-service
 
@@ -546,22 +612,40 @@ decide la validez del token. cv-client debe saber que un 401 devuelto por cv-ser
 de este paso (sesión inválida) tanto como de una llamada directa a auth-service.
 
 #### Módulo: AccountManagement
-Usa: User, Session, PasswordResetToken, Resend (terceros)
+Usa: User, Session, PasswordResetToken, ChangePasswordVerificationCode, Resend (terceros)
 Responsabilidad: Cambiar y recuperar la contraseña, y gestionar la cuenta (editar perfil,
 eliminar cuenta), siempre sobre la propia cuenta del usuario autenticado (o un admin sobre
 cualquiera).
 
-#### Proceso: Cambiar Contraseña
-Disparador: Un usuario autenticado cambia su contraseña (ver Artifact Contracts → "el cv-client
-cambia la contraseña (usuario autenticado) vía auth-service").
+#### Proceso: Cambiar Contraseña (paso 1 de 2 — solicitar código)
+Disparador: Un usuario autenticado inicia el cambio de su contraseña (ver Artifact Contracts →
+"el cv-client cambia la contraseña (usuario autenticado) vía auth-service", paso 1).
 
 1. El módulo recibe currentPassword y newPassword, con el token en el header.
 2. Valida la sesión y ubica al User; verifica que currentPassword coincide con el hash guardado.
 3. Si no coincide → devuelve 401, no se cambia nada.
-4. Hashea newPassword, actualiza el User y revoca las demás Session del usuario (deja viva la
-   actual).
+4. Descarta cualquier ChangePasswordVerificationCode pendiente anterior del usuario.
+5. Hashea newPassword (sin aplicarla todavía) y genera un código de 6 dígitos; crea un
+   ChangePasswordVerificationCode con ambos, su expiración, `used = false` y `attempts = 0`.
+6. Envía el código por email vía Resend a la dirección del propio User.
 
-Resultado: Contraseña actualizada y otras sesiones cerradas, o un error si la actual no coincide.
+Resultado: Código de verificación enviado por email; la contraseña no cambia hasta el paso 2, o
+un error si la actual no coincide.
+
+#### Proceso: Cambiar Contraseña (paso 2 de 2 — confirmar código)
+Disparador: El usuario introduce el código recibido por email (ver Artifact Contracts → "el
+cv-client cambia la contraseña (usuario autenticado) vía auth-service", paso 2).
+
+1. El módulo recibe el código, con el token en el header (misma sesión del paso 1).
+2. Busca el ChangePasswordVerificationCode pendiente (`used = false`) del usuario.
+3. Si no existe → 400. Si expiró → lo invalida (`used = true`) y devuelve 400.
+4. Si el código no coincide → cuenta el intento fallido; al llegar al máximo de intentos permitido
+   invalida el código (`used = true`); 401 en ambos casos.
+5. Si coincide, aplica la contraseña hasheada guardada al User, marca el código `used = true` y
+   revoca las demás Session del usuario (deja viva la actual).
+
+Resultado: Contraseña actualizada y otras sesiones cerradas, o un error si no hay un cambio
+pendiente, el código expiró o no coincide.
 
 #### Proceso: Solicitar Recuperación de Contraseña
 Disparador: Un visitante pide recuperar su contraseña (ver Artifact Contracts → "el cv-client
@@ -717,7 +801,8 @@ ruta de refresh — ver Protocolo de autenticación).
 | POST   | `/auth/login`            | Iniciar sesión                                |
 | POST   | `/auth/refresh`          | Renovar sesión (access + refresh)             |
 | POST   | `/auth/logout`           | Cerrar sesión                                 |
-| POST   | `/auth/change-password`  | Cambiar contraseña (usuario autenticado)      |
+| POST   | `/auth/change-password`  | Cambiar contraseña, paso 1 — valida la actual y envía un código de verificación por email |
+| POST   | `/auth/change-password/verify` | Cambiar contraseña, paso 2 — confirma el código y aplica la nueva contraseña |
 | POST   | `/auth/forgot-password`  | Solicitar recuperación de contraseña          |
 | POST   | `/auth/reset-password`   | Restablecer contraseña con token de recuperación |
 | POST   | `/auth/deactivate`       | Desactivar la propia cuenta                   |
@@ -727,12 +812,20 @@ ruta de refresh — ver Protocolo de autenticación).
 | PATCH  | `/user/:id`              | Editar perfil (`name`/`email`) o reactivar una cuenta (`{ active: true }`, admin) |
 | PUT    | `/user/:id`              | Reemplazar usuario (CRUD estándar; sin proceso de negocio propio) |
 | DELETE | `/user/:id`              | Eliminar usuario (CRUD estándar; la baja de negocio es `/auth/deactivate`, no esta ruta) |
+| GET    | `/role`                  | Listar roles (cualquier usuario autenticado)  |
+| GET    | `/role/:id`              | Leer un Role — así resuelve cv-client si `user.role` (un id) es admin, ver Artifact Contracts |
+| POST   | `/role`                  | Crear Role (admin; sin pantalla propia documentada hoy) |
+| PATCH  | `/role/:id`              | Editar Role, incluye `maxSessions` (admin; sin pantalla propia documentada hoy) |
+| PUT    | `/role/:id`              | Reemplazar Role (admin; sin pantalla propia documentada hoy) |
+| DELETE | `/role/:id`              | Eliminar Role (admin; sin pantalla propia documentada hoy) |
 
 > Las filas de `/user` marcadas "CRUD estándar" existen porque `User` es una UI-model generada en
 > cv-client, pero solo `GET/PATCH /user/:id` tienen un contrato y un proceso de negocio
 > documentados (ver Sección 7 y Sección 9); el resto no debe exponerse en la UI de un usuario
 > normal salvo que se decida construir una pantalla de administración de usuarios (fuera del
-> alcance definido hoy).
+> alcance definido hoy). Lo mismo aplica a las mutaciones de `/role`: existen y exigen rol admin,
+> pero cv-client hoy solo necesita `GET /role/:id` (resolver el nombre del rol propio), no una
+> pantalla de administración de roles.
 
 ### Endpoints de cv-service (prefijo `<CV_API_HOST><CV_API_PATH>`)
 

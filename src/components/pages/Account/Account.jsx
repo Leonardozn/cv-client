@@ -5,7 +5,16 @@ import { useChangePasswordController } from "../../../config/controllers/useChan
 import "./Account.css";
 
 const Account = () => {
-	const { fields, value, isSubmitting, popUp, actions } = useChangePasswordController();
+	const {
+		step,
+		requestFields,
+		requestValue,
+		verifyFields,
+		verifyValue,
+		isSubmitting,
+		popUp,
+		actions,
+	} = useChangePasswordController();
 
 	return (
 		<div className="account-page">
@@ -13,15 +22,38 @@ const Account = () => {
 
 			<Sheet className="account-section" elevation={1}>
 				<h2 className="account-section__title">Change Password</h2>
-				<Form
-					fields={fields}
-					value={value}
-					onChange={actions.onChange}
-					onSubmit={actions.handleSubmit}
-					submitText="Change Password"
-					isLoading={isSubmitting}
-					triggerPopUp={actions.openPopUp}
-				/>
+
+				{step === "REQUEST" && (
+					<Form
+						fields={requestFields}
+						value={requestValue}
+						onChange={actions.onChangeRequest}
+						onSubmit={actions.handleRequestChange}
+						submitText="Send Verification Code"
+						isLoading={isSubmitting}
+						triggerPopUp={actions.openPopUp}
+					/>
+				)}
+
+				{step === "VERIFY" && (
+					<>
+						<p className="account-section__hint">
+							Enter the 6-digit code we emailed you to confirm the password change.
+						</p>
+						<Form
+							key="verify"
+							fields={verifyFields}
+							value={verifyValue}
+							onChange={actions.onChangeVerify}
+							onSubmit={actions.handleVerifyCode}
+							onCancel={actions.handleBackToRequest}
+							cancelText="Start Over"
+							submitText="Confirm Change"
+							isLoading={isSubmitting}
+							triggerPopUp={actions.openPopUp}
+						/>
+					</>
+				)}
 			</Sheet>
 
 			<PopUp

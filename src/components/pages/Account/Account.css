@@ -22,3 +22,9 @@
 	color: var(--color-foreground, #333333);
 	margin: 0 0 1rem;
 }
+
+.account-section__hint {
+	color: var(--color-foreground-muted, #666666);
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
