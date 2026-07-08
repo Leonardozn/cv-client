@@ -1,6 +1,7 @@
 import { createApiConnection } from "../api-connection";
 import { AUTH_API_HOST, AUTH_API_PATH, CV_API_HOST, CV_API_PATH } from "../environment";
 import { LOGIN_PATH } from "../router/paths";
+import { resolveIsAdmin } from "./auth";
 
 const apiPath = CV_API_PATH;
 
@@ -15,9 +16,10 @@ const handleRefresh = async () => {
 	const refreshToken = localStorage.getItem("refreshToken");
 	const response = await refreshConnection.post(`${AUTH_API_PATH}/auth/refresh`, { refreshToken });
 	// auth-service's refresh contract returns the access token as "token", not "accessToken"
-	const { token, refreshToken: newRefreshToken } = response.data?.content || {};
+	const { token, refreshToken: newRefreshToken, user } = response.data?.content || {};
 	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
+	resolveIsAdmin(user);
 	return response;
 };
 
