@@ -25,6 +25,11 @@ const menuConfig = [
 		link: "curriculum",
 		icon: null,
 	},
+	{
+		label: "Account",
+		link: "account",
+		icon: null,
+	},
 ];
 
 // Renders a single menu item (with or without children)

@@ -6,6 +6,7 @@ import Login from "../../components/pages/Login/Login";
 import Main from "../../components/globals/Main/Main";
 import NotFound from "../../components/pages/NotFound/NotFound";
 import Home from "../../components/pages/Home/Home";
+import Account from "../../components/pages/Account/Account";
 
 
 import User from "../../components/pages/User/User";
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
 			{
 				path: `curriculum`,
 				element: <Curriculum />,
+			},
+			{
+				path: `account`,
+				element: <Account />,
 			},
 			{
 				path: `user`,

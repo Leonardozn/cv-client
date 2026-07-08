@@ -51,9 +51,14 @@ export function createApiConnection({
 			if (errorRefresh) return Promise.reject(err);
 
 			if (!onRefresh) {
-				errorRefresh = true;
 				console.error(err.response);
+				// No recovery flow configured: reject and let each future request try
+				// again on its own merits. A connection with no onExpired either (e.g.
+				// register/login, or the refresh POST itself) legitimately gets repeat
+				// 401s — a wrong password retried correctly must still reach the server,
+				// not be short-circuited by a lock nothing will ever clear.
 				if (!onExpired) return Promise.reject(err);
+				errorRefresh = true;
 				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
@@ -77,8 +82,6 @@ export function createApiConnection({
 
 				return response;
 			} catch (error) {
-				errorRefresh = true;
-
 				const isExpiredAuth = authStates.includes(error?.response?.status);
 				if (!isExpiredAuth) {
 					errorRefresh = false;
@@ -86,7 +89,14 @@ export function createApiConnection({
 				}
 
 				console.error(error.response);
-				if (!onExpired) return Promise.reject(error);
+				// Same reasoning as above: only lock the connection when we're actually
+				// about to navigate away. Without onExpired, leave it clear so the next
+				// request (e.g. a corrected retry) isn't short-circuited forever.
+				if (!onExpired) {
+					errorRefresh = false;
+					return Promise.reject(error);
+				}
+				errorRefresh = true;
 				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
