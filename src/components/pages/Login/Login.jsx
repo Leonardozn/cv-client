@@ -3,7 +3,7 @@ import Form from "../../customs/Form/Form";
 import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
 import { useLoginController } from "../../../config/controllers/useLoginController";
-import { REGISTER_PATH } from "../../../config/router/paths";
+import { REGISTER_PATH, FORGOT_PASSWORD_PATH } from "../../../config/router/paths";
 import "./Login.css";
 
 const Login = () => {
@@ -23,6 +23,10 @@ const Login = () => {
 					isLoading={isSubmitting}
 					triggerPopUp={actions.openPopUp}
 				/>
+
+				<p className="login-forgot-password">
+					<Link to={FORGOT_PASSWORD_PATH}>Forgot password?</Link>
+				</p>
 
 				<p className="login-footer">
 					Don't have an account? <Link to={REGISTER_PATH}>Create one</Link>

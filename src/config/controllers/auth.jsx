@@ -56,6 +56,14 @@ export const LOGIN_USER = {
 	},
 };
 
+export const FORGOT_PASSWORD = {
+	name: "FORGOT_PASSWORD",
+	method: async (data, config = publicConnection) => {
+		const response = await config.post(`${apiPath}/auth/forgot-password`, data);
+		return response.data;
+	},
+};
+
 export const LOGOUT_USER = {
 	name: "LOGOUT_USER",
 	method: async (config = basePathConfig) => {
@@ -166,6 +174,7 @@ export const REMOVE_USER = {
 export default {
 	REGISTER_USER,
 	LOGIN_USER,
+	FORGOT_PASSWORD,
 	LOGOUT_USER,
 	CHANGE_PASSWORD,
 	CHANGE_PASSWORD_VERIFY,
