@@ -15,9 +15,10 @@ const handleRefresh = async () => {
 	const refreshToken = localStorage.getItem("refreshToken");
 	const response = await publicConnection.post(`${apiPath}/auth/refresh`, { refreshToken });
 	// auth-service's refresh contract returns the access token as "token", not "accessToken"
-	const { token, refreshToken: newRefreshToken } = response.data?.content || {};
+	const { token, refreshToken: newRefreshToken, user } = response.data?.content || {};
 	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
+	resolveIsAdmin(user);
 	return response;
 };
 
@@ -46,9 +47,10 @@ export const LOGIN_USER = {
 	name: "LOGIN_USER",
 	method: async (data, config = publicConnection) => {
 		const response = await config.post(`${apiPath}/auth/login`, data);
-		const { token, refreshToken } = response.data?.content || {};
+		const { token, refreshToken, user } = response.data?.content || {};
 		if (token) localStorage.setItem("accessToken", token);
 		if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+		resolveIsAdmin(user);
 		return response.data;
 	},
 	response: {
@@ -63,6 +65,39 @@ export const LOGOUT_USER = {
 		return response.data;
 	},
 };
+
+export const GET_ROLE = {
+	name: "GET_ROLE",
+	method: async (id, config = basePathConfig) => {
+		const response = await config.get(`${apiPath}/role/${id}`);
+		return response.data;
+	},
+	response: {
+		data: "content",
+	},
+};
+
+// `user.role` arrives as a Role id (never a name) in every response cv-client
+// receives (register, login, refresh, edit profile) — this is the only way
+// to know if the authenticated user is admin. Resolved in the background and
+// cached as a plain boolean so UI gating (task 20) can read it synchronously
+// instead of re-fetching Role on every render. Fails closed: any error (bad
+// id, network) leaves isAdmin false.
+export const resolveIsAdmin = async (user) => {
+	if (!user?.role) {
+		localStorage.setItem("isAdmin", "false");
+		return;
+	}
+	try {
+		const response = await GET_ROLE.method(user.role);
+		localStorage.setItem("isAdmin", response.content?.name === "admin" ? "true" : "false");
+	} catch (error) {
+		console.error("Error resolving role:", error);
+		localStorage.setItem("isAdmin", "false");
+	}
+};
+
+export const getIsAdmin = () => localStorage.getItem("isAdmin") === "true";
 
 // change-password overloads 401 as a *business* response ("current password
 // doesn't match"), not a session-expiry signal — using basePathConfig here
@@ -169,6 +204,7 @@ export default {
 	LOGOUT_USER,
 	CHANGE_PASSWORD,
 	CHANGE_PASSWORD_VERIFY,
+	GET_ROLE,
 	GET_USER_LIST,
 	ADD_USER,
 	FIND_ONE_USER,

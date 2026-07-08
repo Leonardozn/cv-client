@@ -4,6 +4,7 @@ import { AUTH_STATES } from "../environment";
 export const clearSession = () => {
 	localStorage.removeItem("accessToken");
 	localStorage.removeItem("refreshToken");
+	localStorage.removeItem("isAdmin");
 };
 
 /**
