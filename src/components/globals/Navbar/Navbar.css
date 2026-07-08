@@ -60,3 +60,16 @@
 	margin-inline-start: auto;
 	font-size: 1.25rem;
 }
+
+.navbar-logout-confirm-text {
+	margin-top: 0;
+	margin-bottom: 1.5rem;
+	color: var(--color-foreground-muted, #666666);
+	line-height: 1.5;
+}
+
+.navbar-logout-confirm-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: flex-end;
+}
