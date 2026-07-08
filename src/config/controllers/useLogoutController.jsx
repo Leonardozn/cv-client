@@ -7,8 +7,12 @@ import { LOGIN_PATH } from "../router/paths";
 export const useLogoutController = () => {
 	const navigate = useNavigate();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-	const handleLogout = useCallback(async () => {
+	const openConfirm = useCallback(() => setIsConfirmOpen(true), []);
+	const closeConfirm = useCallback(() => setIsConfirmOpen(false), []);
+
+	const confirmLogout = useCallback(async () => {
 		setIsSubmitting(true);
 		try {
 			await apiMethods.LOGOUT_USER.method();
@@ -19,11 +23,12 @@ export const useLogoutController = () => {
 		} finally {
 			clearSession();
 			setIsSubmitting(false);
+			setIsConfirmOpen(false);
 			navigate(LOGIN_PATH);
 		}
 	}, [navigate]);
 
-	return { isSubmitting, actions: { handleLogout } };
+	return { isSubmitting, isConfirmOpen, actions: { openConfirm, closeConfirm, confirmLogout } };
 };
 
 export default useLogoutController;
