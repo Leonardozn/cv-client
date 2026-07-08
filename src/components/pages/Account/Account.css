@@ -1,0 +1,30 @@
+.account-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	max-width: 480px;
+	margin: 0 auto;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.account-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--color-foreground, #333333);
+	margin: 0;
+}
+
+.account-section__title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--color-foreground, #333333);
+	margin: 0 0 1rem;
+}
+
+.account-section__hint {
+	color: var(--color-foreground-muted, #666666);
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
