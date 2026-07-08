@@ -66,6 +66,14 @@ export const FORGOT_PASSWORD = {
 	},
 };
 
+export const RESET_PASSWORD = {
+	name: "RESET_PASSWORD",
+	method: async (data, config = publicConnection) => {
+		const response = await config.post(`${apiPath}/auth/reset-password`, data);
+		return response.data;
+	},
+};
+
 export const LOGOUT_USER = {
 	name: "LOGOUT_USER",
 	method: async (config = basePathConfig) => {
@@ -210,6 +218,7 @@ export default {
 	REGISTER_USER,
 	LOGIN_USER,
 	FORGOT_PASSWORD,
+	RESET_PASSWORD,
 	LOGOUT_USER,
 	CHANGE_PASSWORD,
 	CHANGE_PASSWORD_VERIFY,

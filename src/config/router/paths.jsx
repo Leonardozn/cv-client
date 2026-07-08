@@ -10,3 +10,4 @@ export const REGISTER_PATH = `${normalizedBase}/register`;
 export const LOGIN_PATH = `${normalizedBase}/login`;
 export const HOME_PATH = `${normalizedBase}/home`;
 export const FORGOT_PASSWORD_PATH = `${normalizedBase}/forgot-password`;
+export const RESET_PASSWORD_PATH = `${normalizedBase}/reset-password`;
