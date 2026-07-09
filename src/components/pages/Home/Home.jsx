@@ -49,6 +49,8 @@ const Home = () => {
 								imageUrl={template.previewUrl}
 								imageAlt={`${template.name} preview`}
 								onImageError={() => actions.handleImageError(templateId)}
+								imageFit="contain"
+								imageAspectRatio="auto"
 								footer={
 									<Button
 										text={isGenerating ? "Generating…" : "Download PDF"}
