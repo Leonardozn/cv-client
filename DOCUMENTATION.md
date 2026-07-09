@@ -15,27 +15,22 @@ generación del PDF).
 ## 3. Objective
 
 Permitir a un usuario registrarse, iniciar y cerrar sesión, completar cada sección de su CV
-(datos personales, perfil, habilidades, formación, experiencia, certificados) mediante un
-asistente por pasos, subir una foto de perfil, elegir un diseño (Template), previsualizar el CV y
-descargar el PDF generado. También debe ofrecer una sección de cuenta (editar perfil, cambiar
-contraseña, recuperar una contraseña olvidada, desactivar la cuenta) y, para un usuario con rol
-admin, una sección de administración de los catálogos Skill y Template. Toda la autorización se
-resuelve con el token de auth-service enviado como `Authorization: Bearer <token>`.
+(datos personales, perfil, habilidades, formación, experiencia, certificados), subir una foto de
+perfil, elegir un diseño (Template), previsualizar el CV y descargar el PDF generado. También debe
+ofrecer una sección de cuenta (editar perfil, cambiar contraseña, recuperar una contraseña
+olvidada, desactivar la cuenta). Toda la autorización se resuelve con el token de auth-service
+enviado como `Authorization: Bearer <token>`.
 
 > Nota de UI — listas flexibles: el formulario debe indicar explícitamente que los **enlaces de
 > contacto**, el **headline**, los **teléfonos** y las **habilidades** son listas flexibles: el
 > usuario puede agregar tantas entradas como quiera y, en habilidades, escribir libremente además
 > de aceptar las sugerencias del catálogo (una habilidad que no figure igual se guarda).
 >
-> Nota de UI — formulario por pasos (wizard): la captura de datos del CV NO es un formulario
-> único y largo, sino un asistente por pasos con navegación adelante/atrás e indicador de
-> progreso. Los pasos siguen las secciones del CV: (1) Datos personales (nombre, headline —lista—,
-> ciudad, estado, país, teléfonos —lista—, foto, enlaces de contacto), (2) Perfil, (3) Habilidades, (4) Formación, (5)
-> Experiencia, (6) Certificados y (7) Diseño y descarga (elegir Template, previsualizar y
-> descargar el PDF). Cada paso valida sus campos antes de avanzar; los pasos con listas
-> (formación, experiencia, certificados, habilidades, enlaces) permiten agregar/editar/eliminar
-> varias entradas. Esto es una decisión de presentación del cv-client: los contratos con
-> cv-service (CRUD por sección + generación de PDF) no cambian.
+> Nota de UI — captura de datos del CV: la página de Curriculum presenta todas las secciones
+> (Datos personales, Perfil, Habilidades, Formación, Experiencia, Certificados) en una sola
+> página, cada una con su propio guardado independiente — no es un asistente por pasos. Formación,
+> Experiencia y Certificados son listas editables (agregar/editar/eliminar varias entradas). Elegir
+> el diseño (Template), previsualizar y descargar el PDF vive en la página Home, no en Curriculum.
 >
 > Nota de UI — cambio de contraseña en dos pasos: al enviar la contraseña actual y la nueva,
 > auth-service NO la aplica de inmediato — envía un código de verificación de 6 dígitos por email
@@ -62,7 +57,9 @@ resuelve con el token de auth-service enviado como `Authorization: Bearer <token
 9. Implementar el contrato: el cv-client resuelve el nombre de un Role vía auth-service
    (`GET /role/:id`) — necesario porque `user.role` llega como el id del Role en toda respuesta
    que recibe cv-client (registro, login, refresh, cuenta); es la única forma de saber si el
-   usuario autenticado es admin para la tarea 20.
+   usuario autenticado es admin. cv-client no expone hoy ninguna funcionalidad exclusiva de admin
+   (ver Sección 7 → Autorización por rol); esta resolución queda disponible por completitud del
+   contrato y por si una futura funcionalidad la necesita.
 10. Implementar el contrato: el cv-client solicita recuperar contraseña vía auth-service.
 11. Implementar el contrato: el cv-client restablece la contraseña con un token de recuperación
     vía auth-service — página en la ruta `/reset-password` que lee el `token` del query string
@@ -76,17 +73,10 @@ resuelve con el token de auth-service enviado como `Authorization: Bearer <token
 15. Implementar el contrato: el cv-client obtiene los catálogos (Skill, Template) vía cv-service
     (lectura pública; escritura restringida a rol admin).
 16. Implementar el contrato: el cv-client solicita la generación del PDF vía cv-service.
-17. Implementar el Proceso "Guardar Datos del Curriculum" como el asistente por pasos (wizard) de
-    7 pasos, sobre las tareas 13–14: navegación adelante/atrás, indicador de progreso, listas
-    flexibles (enlaces de contacto, habilidades, formación, experiencia, certificados) y
-    validación por paso.
-18. Implementar el Proceso "Autocompletar Habilidades y Elegir Diseño": sugerencias de Skill en
-    el paso de habilidades y selector de Template en el paso de diseño y descarga.
-19. Implementar el Proceso "Generar el PDF del CV": botón de descarga en el paso final,
-    manejando la respuesta binaria `application/pdf`.
-20. Implementar el Proceso "Administrar Catálogos" (admin): pantalla de administración para
-    crear/editar/desactivar Skill y Template, visible solo para el rol admin — resuelto vía la
-    tarea 9, no leyendo `user.role` directamente — (el backend responde 403 a quien no lo tenga).
+17. Implementar el Proceso "Autocompletar Habilidades y Elegir Diseño": sugerencias de Skill en
+    el campo de habilidades del Curriculum y selector de Template al generar el PDF (ver Home).
+18. Implementar el Proceso "Generar el PDF del CV": botón de descarga en Home, manejando la
+    respuesta binaria `application/pdf`.
 
 ## 5. Artifacts
 
@@ -110,9 +100,9 @@ Permite a un usuario registrarse, iniciar sesión, cerrar sesión, completar cad
 (datos personales, perfil, habilidades, formación, experiencia, certificados), subir una foto de
 perfil, elegir un diseño, previsualizar el CV y descargar el PDF generado, llamando a
 auth-service y cv-service. También ofrece una sección de cuenta para editar el perfil, cambiar
-la contraseña, recuperar una contraseña olvidada y desactivar la cuenta. Un usuario con rol admin
-ve además una sección de administración de catálogos para crear, editar y desactivar Skill y
-Template.
+la contraseña, recuperar una contraseña olvidada y desactivar la cuenta. La administración de los
+catálogos Skill y Template (alta/edición/baja, exclusiva de rol admin) no vive en cv-client, sino
+en un microservicio/frontend distinto.
 
 ### auth-service (Microservicio propio)
 Maneja el ciclo de vida de identidad y cuenta: registro, inicio y cierre de sesión, validación
@@ -190,17 +180,17 @@ cuenta:
 usuario y *qué rol* tiene (user/admin). El rol **admin es un superconjunto de user**: toda acción
 que puede realizar un user (editar su CV, generar su PDF, gestionar su cuenta, etc.) la puede
 realizar también un admin; el admin únicamente suma las capacidades exclusivas (administrar los
-catálogos Skill/Template). cv-client debe ocultar o inhabilitar en su UI las acciones exclusivas
-de admin para quien no tenga ese rol, sabiendo que el backend igual las rechaza con 403.
+catálogos Skill/Template), que viven en un microservicio/frontend distinto de cv-client, no en
+esta UI. cv-client no tiene hoy ninguna acción exclusiva de admin propia que deba ocultar.
 
 **`user.role` es un id, no un nombre, salvo en `/auth/validate`.** `User.role` es una referencia a
 `Role` (ver Data Models); en todas las respuestas que recibe **cv-client** (registro, login,
 refresh, editar perfil/reactivar) `role` viaja como el **id crudo** del Role, no como `"admin"` /
 `"user"`. Solo la ruta interna `POST /auth/validate` —que usa cv-service, no cv-client— resuelve
 `role` al **nombre** del Role, porque es el contrato del que depende la autorización de recursos
-en cv-service. Para que cv-client sepa si el usuario autenticado es admin (y así decidir si
-muestra la administración de catálogos), debe resolver ese id llamando a `GET /role/:id` (ver
-contrato abajo) — nunca comparar `user.role` directamente contra `'admin'`.
+en cv-service. Si cv-client necesita saber si el usuario autenticado es admin, debe resolver ese
+id llamando a `GET /role/:id` (ver contrato abajo) — nunca comparar `user.role` directamente
+contra `'admin'`.
 
 ### Contrato: el cv-client resuelve un Role vía auth-service
 
@@ -702,8 +692,9 @@ autocompletar) y de diseños (para el selector de plantilla). La lectura es púb
 habilidades nuevas al guardar un CV.
 
 #### Proceso: Administrar Catálogos (admin)
-Disparador: Un admin crea/edita/elimina una Skill o un Template (ver Artifact Contracts → "el
-cv-client obtiene los catálogos (Skill, Template) vía cv-service").
+Disparador: Un admin crea/edita/elimina una Skill o un Template desde un microservicio/frontend de
+administración distinto de cv-client (cv-client solo consume la lectura pública — ver Artifact
+Contracts → "el cv-client obtiene los catálogos (Skill, Template) vía cv-service").
 
 1. La ruta de escritura está protegida por el middleware configurado como `requireRole('admin')`,
    que valida el token con auth-service y exige rol admin (ver Protocolo de autenticación →
