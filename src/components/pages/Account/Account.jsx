@@ -26,67 +26,75 @@ const Account = () => {
 		<div className="account-page">
 			<h1 className="account-title">Account</h1>
 
-			<Sheet className="account-section" elevation={1}>
-				<h2 className="account-section__title">Edit Profile</h2>
-				<Form
-					fields={profile.fields}
-					value={profile.value}
-					onChange={profile.actions.onChange}
-					onSubmit={profile.actions.handleSubmit}
-					submitText="Save Changes"
-					isLoading={profile.isSubmitting}
-					triggerPopUp={profile.actions.openPopUp}
-				/>
-			</Sheet>
-
-			<Sheet className="account-section" elevation={1}>
-				<h2 className="account-section__title">Change Password</h2>
-
-				{step === "REQUEST" && (
+			<div className="account-grid">
+				<Sheet className="account-section" elevation={1}>
+					<h2 className="account-section__title">Edit Profile</h2>
 					<Form
-						fields={requestFields}
-						value={requestValue}
-						onChange={actions.onChangeRequest}
-						onSubmit={actions.handleRequestChange}
-						submitText="Send Verification Code"
-						isLoading={isSubmitting}
-						triggerPopUp={actions.openPopUp}
+						fields={profile.fields}
+						value={profile.value}
+						onChange={profile.actions.onChange}
+						onSubmit={profile.actions.handleSubmit}
+						submitText="Save Changes"
+						isLoading={profile.isSubmitting}
+						triggerPopUp={profile.actions.openPopUp}
 					/>
-				)}
+				</Sheet>
 
-				{step === "VERIFY" && (
-					<>
-						<p className="account-section__hint">
-							Enter the 6-digit code we emailed you to confirm the password change.
-						</p>
+				<Sheet className="account-section" elevation={1}>
+					<h2 className="account-section__title">Change Password</h2>
+
+					{step === "REQUEST" && (
 						<Form
-							key="verify"
-							fields={verifyFields}
-							value={verifyValue}
-							onChange={actions.onChangeVerify}
-							onSubmit={actions.handleVerifyCode}
-							onCancel={actions.handleBackToRequest}
-							cancelText="Start Over"
-							submitText="Confirm Change"
+							fields={requestFields}
+							value={requestValue}
+							onChange={actions.onChangeRequest}
+							onSubmit={actions.handleRequestChange}
+							submitText="Send Verification Code"
 							isLoading={isSubmitting}
 							triggerPopUp={actions.openPopUp}
 						/>
-					</>
-				)}
-			</Sheet>
+					)}
 
-			<Sheet className="account-section account-section--danger" elevation={1}>
-				<h2 className="account-section__title">Deactivate Account</h2>
-				<p className="account-section__hint">
-					Deactivating your account signs you out everywhere and prevents you from logging back
-					in. This can be reversed only by an administrator.
-				</p>
-				<Button
-					text="Deactivate Account"
-					type="error"
-					onClick={deactivate.actions.openConfirm}
-				/>
-			</Sheet>
+					{step === "VERIFY" && (
+						<>
+							<p className="account-section__hint">
+								Enter the 6-digit code we emailed you to confirm the password change.
+							</p>
+							<Form
+								key="verify"
+								fields={verifyFields}
+								value={verifyValue}
+								onChange={actions.onChangeVerify}
+								onSubmit={actions.handleVerifyCode}
+								onCancel={actions.handleBackToRequest}
+								cancelText="Start Over"
+								submitText="Confirm Change"
+								isLoading={isSubmitting}
+								triggerPopUp={actions.openPopUp}
+							/>
+						</>
+					)}
+				</Sheet>
+
+				<Sheet className="account-section account-section--danger" elevation={1}>
+					<div className="account-danger-row">
+						<div>
+							<h2 className="account-section__title">Deactivate Account</h2>
+							<p className="account-section__hint account-section__hint--tight">
+								Deactivating your account signs you out everywhere and prevents you from logging
+								back in. This can be reversed only by an administrator.
+							</p>
+						</div>
+						<div className="account-danger-row__button">
+							<Button
+								text="Deactivate Account"
+								type="error"
+								onClick={deactivate.actions.openConfirm}
+							/>
+						</div>
+					</div>
+				</Sheet>
+			</div>
 
 			<Modal
 				isOpen={deactivate.isConfirmOpen}
