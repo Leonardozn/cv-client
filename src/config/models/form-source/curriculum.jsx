@@ -54,7 +54,17 @@ export const skillsFields = [
 		input: "sublist",
 		outputType: "string",
 		structure: [
-			{ id: "name", label: "Skill", placeholder: "e.g. Node.js", input: "text", required: true },
+			{
+				id: "name",
+				label: "Skill",
+				placeholder: "e.g. Node.js",
+				input: "text",
+				required: true,
+				// Suggestions from the Skill catalog (GET /skill, public read) — resolved
+				// into `.options` by mapDynamicOptions. The field stays free text: a
+				// skill not in the catalog is still accepted and saved as-is.
+				dynamicOptions: { methodName: "GET_SKILL_LIST", valueKey: "name", labelKey: "name" },
+			},
 		],
 	},
 ];

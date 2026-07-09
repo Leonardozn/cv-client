@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import apiMethods from "./cv";
-import { preparePayload } from "./map-methods";
+import { preparePayload, mapDynamicOptions } from "./map-methods";
 import { personalDataFields, profileFields, skillsFields } from "../models/form-source/curriculum";
 import educationFields from "../models/form-source/education";
 import experienceFields from "../models/form-source/experience";
@@ -19,6 +19,7 @@ export const useCurriculumFormController = () => {
 	const [education, setEducation] = useState(emptyListSection);
 	const [experience, setExperience] = useState(emptyListSection);
 	const [certificate, setCertificate] = useState(emptyListSection);
+	const [resolvedSkillsFields, setResolvedSkillsFields] = useState(skillsFields);
 	const [popUp, setPopUp] = useState({ isOpen: false, type: "info", text: "" });
 
 	const triggerPopUp = useCallback((type, text) => setPopUp({ isOpen: true, type, text }), []);
@@ -156,6 +157,10 @@ export const useCurriculumFormController = () => {
 				skills: {},
 			};
 
+			mapDynamicOptions(skillsFields, apiMethods)
+				.then(setResolvedSkillsFields)
+				.catch((error) => console.error("Error loading skill suggestions:", error));
+
 			try {
 				const res = await apiMethods.GET_CURRICULUM_LIST.method();
 				const record = res.content?.records?.[0];
@@ -246,6 +251,7 @@ export const useCurriculumFormController = () => {
 		personalData,
 		profile,
 		skills,
+		skillsFields: resolvedSkillsFields,
 		education,
 		experience,
 		certificate,

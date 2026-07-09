@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import "./Input.css";
 
 const PRESET_COLORS = [
@@ -35,11 +35,18 @@ const Input = ({
 	apiPath,
 	enum: enumValues,
 	hideEnumHint = false,
+	options,
 	...props
 }) => {
 	const isFile = file || htmlType === "file" || type === "file";
 	const isFiles = type === "files";
 	const fieldClass = `input-field ${error ? "input-field--error" : ""}`;
+
+	// Native <datalist> suggestions: shows a browser-native dropdown while
+	// leaving the field free-text — used for catalog-backed fields (e.g. Skill
+	// suggestions) where the user must still be able to type an unlisted value.
+	const datalistId = useId();
+	const hasSuggestions = Array.isArray(options) && options.length > 0 && !isFile && !textarea;
 
 	// A file input is only interactive when at least one host prop is provided
 	const isConfigured = !isFile || !!(imageHost || (apiHost && apiPath));
@@ -101,13 +108,23 @@ const Input = ({
 
 
 		return (
-			<input
-				className={fieldClass}
-				type={inputType}
-				placeholder={ph}
-				value={value}
-				{...props}
-			/>
+			<>
+				<input
+					className={fieldClass}
+					type={inputType}
+					placeholder={ph}
+					value={value}
+					list={hasSuggestions ? datalistId : undefined}
+					{...props}
+				/>
+				{hasSuggestions && (
+					<datalist id={datalistId}>
+						{options.map((opt) => (
+							<option key={opt.id} value={opt.value} />
+						))}
+					</datalist>
+				)}
+			</>
 		);
 	};
 
