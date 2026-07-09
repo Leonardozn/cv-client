@@ -30,7 +30,9 @@ export const useLoginController = () => {
 			const message =
 				statusCode === 401
 					? "Invalid email or password."
-					: "Couldn't sign in. Check your connection and try again.";
+					: statusCode === 403
+						? "This account has been deactivated. Contact an administrator to reactivate it."
+						: "Couldn't sign in. Check your connection and try again.";
 			triggerPopUp("error", message);
 			setStatus("IDLE");
 		}
