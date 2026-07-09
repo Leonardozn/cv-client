@@ -47,7 +47,7 @@ const ActionButton = ({ icon, onClick }) => (
 
 // Shared image block: renders the image + all overlay badges/actions.
 // Used by all layouts that display an image.
-const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions }) => {
+const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions, onImageError }) => {
 	const hasOverlays =
 		actions.length > 0 ||
 		["top-left", "top-right", "bottom-left", "bottom-right"].some(
@@ -56,7 +56,7 @@ const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions }) => {
 
 	return (
 		<div className="card__image-wrapper">
-			<img src={imageUrl} alt={imageAlt} className="card__image" />
+			<img src={imageUrl} alt={imageAlt} className="card__image" onError={onImageError} />
 
 			{hasOverlays && (
 				<div className="card__overlays">
@@ -108,6 +108,7 @@ const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions }) => {
 //   description  {string}   — Supporting text.
 //   imageUrl     {string}   — Optional image source.
 //   imageAlt     {string}   — Alt text for image.
+//   onImageError {function} — Called if imageUrl fails to load (e.g. hide/swap it).
 //   layout          {string}   — Image position: "top" (default) | "left" | "right" | "background".
 //   overlayStrength  {string}   — Gradient intensity for layout="background":
 //                                  "light" | "medium" (default) | "heavy".
@@ -126,6 +127,7 @@ const Card = ({
 	description,
 	imageUrl,
 	imageAlt = "",
+	onImageError,
 	layout = "top",
 	overlayStrength = "medium",
 	badges = [],
@@ -184,6 +186,7 @@ const Card = ({
 					imageAlt={imageAlt}
 					badgeGroups={badgeGroups}
 					actions={actions}
+					onImageError={onImageError}
 				/>
 			)}
 
@@ -194,6 +197,7 @@ const Card = ({
 					imageAlt={imageAlt}
 					badgeGroups={badgeGroups}
 					actions={actions}
+					onImageError={onImageError}
 				/>
 			)}
 

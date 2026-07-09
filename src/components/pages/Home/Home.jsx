@@ -46,6 +46,9 @@ const Home = () => {
 								key={templateId}
 								title={template.name}
 								description={template.description}
+								imageUrl={template.previewUrl}
+								imageAlt={`${template.name} preview`}
+								onImageError={() => actions.handleImageError(templateId)}
 								footer={
 									<Button
 										text={isGenerating ? "Generating…" : "Download PDF"}
