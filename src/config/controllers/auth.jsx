@@ -19,6 +19,7 @@ const handleRefresh = async () => {
 	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
 	resolveIsAdmin(user);
+	persistUser(user);
 	return response;
 };
 
@@ -51,6 +52,7 @@ export const LOGIN_USER = {
 		if (token) localStorage.setItem("accessToken", token);
 		if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
 		resolveIsAdmin(user);
+		persistUser(user);
 		return response.data;
 	},
 	response: {
@@ -114,6 +116,22 @@ export const resolveIsAdmin = async (user) => {
 };
 
 export const getIsAdmin = () => localStorage.getItem("isAdmin") === "true";
+
+// Persisted alongside isAdmin so the account section (task 12) can prefill
+// name/email without a dedicated "current user" endpoint — auth-service only
+// exposes GET /user/:id, not GET /user/me.
+export const persistUser = (user) => {
+	if (!user) return;
+	localStorage.setItem("user", JSON.stringify(user));
+};
+
+export const getStoredUser = () => {
+	try {
+		return JSON.parse(localStorage.getItem("user"));
+	} catch (error) {
+		return null;
+	}
+};
 
 // change-password overloads 401 as a *business* response ("current password
 // doesn't match"), not a session-expiry signal — using basePathConfig here
@@ -214,6 +232,17 @@ export const REMOVE_USER = {
 	},
 };
 
+// Deactivates the caller's own account (User.active = false) and revokes
+// their sessions server-side; cv-client just clears the local session and
+// redirects to login, same as a normal logout.
+export const DEACTIVATE_ACCOUNT = {
+	name: "DEACTIVATE_ACCOUNT",
+	method: async (config = basePathConfig) => {
+		const response = await config.post(`${apiPath}/auth/deactivate`);
+		return response.data;
+	},
+};
+
 export default {
 	REGISTER_USER,
 	LOGIN_USER,
@@ -229,4 +258,5 @@ export default {
 	UPDATE_USER,
 	REPLACE_USER,
 	REMOVE_USER,
+	DEACTIVATE_ACCOUNT,
 };

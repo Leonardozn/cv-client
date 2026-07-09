@@ -1,7 +1,7 @@
 import { createApiConnection } from "../api-connection";
 import { AUTH_API_HOST, AUTH_API_PATH, CV_API_HOST, CV_API_PATH } from "../environment";
 import { LOGIN_PATH } from "../router/paths";
-import { resolveIsAdmin } from "./auth";
+import { resolveIsAdmin, persistUser } from "./auth";
 
 const apiPath = CV_API_PATH;
 
@@ -20,6 +20,7 @@ const handleRefresh = async () => {
 	if (token) localStorage.setItem("accessToken", token);
 	if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
 	resolveIsAdmin(user);
+	persistUser(user);
 	return response;
 };
 

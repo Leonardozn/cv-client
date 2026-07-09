@@ -56,6 +56,26 @@
 	background-color: var(--accent);
 }
 
+.btn--info {
+	--accent: var(--color-info);
+	background-color: var(--accent);
+}
+
+.btn--success {
+	--accent: var(--color-success);
+	background-color: var(--accent);
+}
+
+.btn--warning {
+	--accent: var(--color-warning);
+	background-color: var(--accent);
+}
+
+.btn--error {
+	--accent: var(--color-error);
+	background-color: var(--accent);
+}
+
 .btn--custom {
 	background-color: var(--accent);
 }
