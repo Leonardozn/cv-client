@@ -1,5 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import apiMethods from "./cv";
+import { CV_API_HOST, CV_IMAGES_API_PATH, CV_STATIC_IMAGES_HOST } from "../environment";
+
+// Template preview images aren't a modeled field — they're static files named
+// after Template.key (e.g. "two-column-classic.png"), dropped by whoever owns
+// the catalog into the same static folder cv-service already serves
+// Curriculum.photo from. New templates get a preview automatically as long as
+// the filename matches; no cv-client change needed when a template is added.
+const TEMPLATE_IMAGES_HOST = CV_STATIC_IMAGES_HOST || `${CV_API_HOST}${CV_IMAGES_API_PATH}`;
+const getTemplatePreviewUrl = (template) => `${TEMPLATE_IMAGES_HOST}/${template.key}.png`;
 
 // A 4xx/5xx response still comes back as a Blob when responseType is "blob"
 // (axios doesn't sniff the body ahead of time); read it to recover the real
@@ -21,6 +30,7 @@ export const useHomeController = () => {
 	const [curriculumId, setCurriculumId] = useState(null);
 	const [templates, setTemplates] = useState([]);
 	const [generatingId, setGeneratingId] = useState(null);
+	const [brokenImageIds, setBrokenImageIds] = useState(() => new Set());
 	const [popUp, setPopUp] = useState({ isOpen: false, type: "info", text: "" });
 
 	const triggerPopUp = useCallback((type, text) => setPopUp({ isOpen: true, type, text }), []);
@@ -63,13 +73,29 @@ export const useHomeController = () => {
 		}
 	}, [curriculumId, triggerPopUp]);
 
+	const handleImageError = useCallback((templateId) => {
+		setBrokenImageIds((prev) => (prev.has(templateId) ? prev : new Set(prev).add(templateId)));
+	}, []);
+
+	const templatesWithPreview = useMemo(
+		() =>
+			templates.map((template) => {
+				const templateId = template._id || template.id;
+				return {
+					...template,
+					previewUrl: brokenImageIds.has(templateId) ? null : getTemplatePreviewUrl(template),
+				};
+			}),
+		[templates, brokenImageIds],
+	);
+
 	return {
 		status,
 		curriculumId,
-		templates,
+		templates: templatesWithPreview,
 		generatingId,
 		popUp,
-		actions: { handleGeneratePdf, closePopUp },
+		actions: { handleGeneratePdf, handleImageError, closePopUp },
 	};
 };
 

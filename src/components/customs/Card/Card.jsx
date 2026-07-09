@@ -47,16 +47,33 @@ const ActionButton = ({ icon, onClick }) => (
 
 // Shared image block: renders the image + all overlay badges/actions.
 // Used by all layouts that display an image.
-const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions }) => {
+const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions, onImageError, imageFit, imageAspectRatio }) => {
 	const hasOverlays =
 		actions.length > 0 ||
 		["top-left", "top-right", "bottom-left", "bottom-right"].some(
 			(pos) => badgeGroups[pos]?.length > 0,
 		);
 
+	// "auto" opts out of the fixed-ratio crop entirely: the wrapper's height
+	// collapses to fit the image instead of the layout's default ratio, and the
+	// image renders at its true proportions (no cropping, no letterboxing).
+	const isNaturalSize = imageAspectRatio === "auto";
+
 	return (
-		<div className="card__image-wrapper">
-			<img src={imageUrl} alt={imageAlt} className="card__image" />
+		<div
+			className="card__image-wrapper"
+			style={imageAspectRatio ? { aspectRatio: imageAspectRatio } : undefined}
+		>
+			<img
+				src={imageUrl}
+				alt={imageAlt}
+				className="card__image"
+				style={{
+					...(imageFit ? { objectFit: imageFit } : {}),
+					...(isNaturalSize ? { height: "auto" } : {}),
+				}}
+				onError={onImageError}
+			/>
 
 			{hasOverlays && (
 				<div className="card__overlays">
@@ -108,6 +125,12 @@ const CardImage = ({ imageUrl, imageAlt, badgeGroups, actions }) => {
 //   description  {string}   — Supporting text.
 //   imageUrl     {string}   — Optional image source.
 //   imageAlt     {string}   — Alt text for image.
+//   onImageError {function} — Called if imageUrl fails to load (e.g. hide/swap it).
+//   imageFit         {string}   — object-fit override, e.g. "contain" for a full,
+//                                  uncropped image instead of the default "cover".
+//   imageAspectRatio {string}   — aspect-ratio override (e.g. "3 / 4") instead of
+//                                  the layout default, or "auto" to render the
+//                                  image at its true proportions with no crop.
 //   layout          {string}   — Image position: "top" (default) | "left" | "right" | "background".
 //   overlayStrength  {string}   — Gradient intensity for layout="background":
 //                                  "light" | "medium" (default) | "heavy".
@@ -126,6 +149,9 @@ const Card = ({
 	description,
 	imageUrl,
 	imageAlt = "",
+	onImageError,
+	imageFit,
+	imageAspectRatio,
 	layout = "top",
 	overlayStrength = "medium",
 	badges = [],
@@ -184,6 +210,9 @@ const Card = ({
 					imageAlt={imageAlt}
 					badgeGroups={badgeGroups}
 					actions={actions}
+					onImageError={onImageError}
+					imageFit={imageFit}
+					imageAspectRatio={imageAspectRatio}
 				/>
 			)}
 
@@ -194,6 +223,9 @@ const Card = ({
 					imageAlt={imageAlt}
 					badgeGroups={badgeGroups}
 					actions={actions}
+					onImageError={onImageError}
+					imageFit={imageFit}
+					imageAspectRatio={imageAspectRatio}
 				/>
 			)}
 
