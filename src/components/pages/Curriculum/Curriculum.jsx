@@ -4,7 +4,7 @@ import PopUp from "../../customs/PopUp/PopUp";
 import EntryListSection from "../../customs/EntryListSection/EntryListSection";
 import Spinner from "../../modulars/Spinner/Spinner";
 import { useCurriculumFormController } from "../../../config/controllers/useCurriculumFormController";
-import { personalDataFields, profileFields, skillsFields } from "../../../config/models/form-source/curriculum";
+import { personalDataFields, profileFields } from "../../../config/models/form-source/curriculum";
 import educationFields from "../../../config/models/form-source/education";
 import experienceFields from "../../../config/models/form-source/experience";
 import certificateFields from "../../../config/models/form-source/certificate";
@@ -24,6 +24,7 @@ const Curriculum = () => {
 		personalData,
 		profile,
 		skills,
+		skillsFields,
 		education,
 		experience,
 		certificate,
@@ -80,6 +81,10 @@ const Curriculum = () => {
 					<h2 className="curriculum-section__title">Skills</h2>
 					<SectionStatus status={skills.status} pendingSync={skills.pendingSync} />
 				</div>
+				<p className="curriculum-section__hint">
+					Start typing for suggestions from our skill catalog, or add your own — any skill
+					you type is saved even if it's not on the list.
+				</p>
 				<Form
 					fields={skillsFields}
 					value={skills.value}

@@ -52,3 +52,10 @@
 .curriculum-section__status--error {
 	color: var(--color-error, #dc2626);
 }
+
+.curriculum-section__hint {
+	color: var(--color-foreground-muted, #666666);
+	margin: -0.5rem 0 1rem;
+	line-height: 1.5;
+	font-size: 0.875rem;
+}
