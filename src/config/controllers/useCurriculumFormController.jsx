@@ -10,6 +10,10 @@ import { savePendingDraft, loadPendingDraft, clearPendingDraft } from "./curricu
 const emptySection = { value: {}, status: "IDLE", pendingSync: false };
 const emptyListSection = { entries: [], status: "IDLE", pendingSync: false, pendingEntry: null };
 
+// Most recent first, matching standard resume ordering.
+const sortByDateDesc = (entries, field) =>
+	[...entries].sort((a, b) => new Date(b[field]) - new Date(a[field]));
+
 export const useCurriculumFormController = () => {
 	const [status, setStatus] = useState("INITIALIZING");
 	const [curriculumId, setCurriculumId] = useState(null);
@@ -78,7 +82,7 @@ export const useCurriculumFormController = () => {
 	);
 
 	// ── Shared save/remove for the 3 sections that are their own cv-service entities ──
-	const saveListEntry = useCallback(async ({ addMethod, updateMethod, fields, formData, editingId, sectionKey, setSectionState, currentId }) => {
+	const saveListEntry = useCallback(async ({ addMethod, updateMethod, fields, formData, editingId, sectionKey, setSectionState, currentId, dateField }) => {
 		setSectionState((prev) => ({ ...prev, status: "SAVING" }));
 		savePendingDraft(sectionKey, { data: formData, editingId });
 		try {
@@ -92,7 +96,7 @@ export const useCurriculumFormController = () => {
 				const entries = editingId
 					? prev.entries.map((entry) => ((entry._id || entry.id) === editingId ? saved : entry))
 					: [...prev.entries, saved];
-				return { entries, status: "SAVED", pendingSync: false, pendingEntry: null };
+				return { entries: sortByDateDesc(entries, dateField), status: "SAVED", pendingSync: false, pendingEntry: null };
 			});
 			triggerPopUp("success", "Saved.");
 		} catch (error) {
@@ -121,7 +125,7 @@ export const useCurriculumFormController = () => {
 	const handleSaveEducation = useCallback((formData, editingId) => saveListEntry({
 		addMethod: apiMethods.ADD_EDUCATION, updateMethod: apiMethods.UPDATE_EDUCATION,
 		fields: educationFields, formData, editingId,
-		sectionKey: "education", setSectionState: setEducation, currentId: curriculumId,
+		sectionKey: "education", setSectionState: setEducation, currentId: curriculumId, dateField: "startDate",
 	}), [saveListEntry, curriculumId]);
 	const handleRemoveEducation = useCallback((id) => removeListEntry({
 		removeMethod: apiMethods.REMOVE_EDUCATION, id, sectionKey: "education", setSectionState: setEducation,
@@ -130,7 +134,7 @@ export const useCurriculumFormController = () => {
 	const handleSaveExperience = useCallback((formData, editingId) => saveListEntry({
 		addMethod: apiMethods.ADD_EXPERIENCE, updateMethod: apiMethods.UPDATE_EXPERIENCE,
 		fields: experienceFields, formData, editingId,
-		sectionKey: "experience", setSectionState: setExperience, currentId: curriculumId,
+		sectionKey: "experience", setSectionState: setExperience, currentId: curriculumId, dateField: "startDate",
 	}), [saveListEntry, curriculumId]);
 	const handleRemoveExperience = useCallback((id) => removeListEntry({
 		removeMethod: apiMethods.REMOVE_EXPERIENCE, id, sectionKey: "experience", setSectionState: setExperience,
@@ -139,7 +143,7 @@ export const useCurriculumFormController = () => {
 	const handleSaveCertificate = useCallback((formData, editingId) => saveListEntry({
 		addMethod: apiMethods.ADD_CERTIFICATE, updateMethod: apiMethods.UPDATE_CERTIFICATE,
 		fields: certificateFields, formData, editingId,
-		sectionKey: "certificate", setSectionState: setCertificate, currentId: curriculumId,
+		sectionKey: "certificate", setSectionState: setCertificate, currentId: curriculumId, dateField: "date",
 	}), [saveListEntry, curriculumId]);
 	const handleRemoveCertificate = useCallback((id) => removeListEntry({
 		removeMethod: apiMethods.REMOVE_CERTIFICATE, id, sectionKey: "certificate", setSectionState: setCertificate,
@@ -190,9 +194,9 @@ export const useCurriculumFormController = () => {
 						apiMethods.GET_EXPERIENCE_LIST.method({ query: { curriculum: id } }),
 						apiMethods.GET_CERTIFICATE_LIST.method({ query: { curriculum: id } }),
 					]);
-					setEducation({ entries: eduRes.content?.records || [], status: "IDLE", pendingSync: false, pendingEntry: null });
-					setExperience({ entries: expRes.content?.records || [], status: "IDLE", pendingSync: false, pendingEntry: null });
-					setCertificate({ entries: certRes.content?.records || [], status: "IDLE", pendingSync: false, pendingEntry: null });
+					setEducation({ entries: sortByDateDesc(eduRes.content?.records || [], "startDate"), status: "IDLE", pendingSync: false, pendingEntry: null });
+					setExperience({ entries: sortByDateDesc(expRes.content?.records || [], "startDate"), status: "IDLE", pendingSync: false, pendingEntry: null });
+					setCertificate({ entries: sortByDateDesc(certRes.content?.records || [], "date"), status: "IDLE", pendingSync: false, pendingEntry: null });
 				}
 			} catch (error) {
 				console.error("Error loading curriculum:", error);
@@ -223,11 +227,11 @@ export const useCurriculumFormController = () => {
 
 			// Restore + auto-retry (when possible) the 3 list sections
 			const listDrafts = [
-				["education", apiMethods.ADD_EDUCATION, apiMethods.UPDATE_EDUCATION, educationFields, setEducation],
-				["experience", apiMethods.ADD_EXPERIENCE, apiMethods.UPDATE_EXPERIENCE, experienceFields, setExperience],
-				["certificate", apiMethods.ADD_CERTIFICATE, apiMethods.UPDATE_CERTIFICATE, certificateFields, setCertificate],
+				["education", apiMethods.ADD_EDUCATION, apiMethods.UPDATE_EDUCATION, educationFields, setEducation, "startDate"],
+				["experience", apiMethods.ADD_EXPERIENCE, apiMethods.UPDATE_EXPERIENCE, experienceFields, setExperience, "startDate"],
+				["certificate", apiMethods.ADD_CERTIFICATE, apiMethods.UPDATE_CERTIFICATE, certificateFields, setCertificate, "date"],
 			];
-			for (const [sectionKey, addMethod, updateMethod, fields, setSectionState] of listDrafts) {
+			for (const [sectionKey, addMethod, updateMethod, fields, setSectionState, dateField] of listDrafts) {
 				const draft = loadPendingDraft(sectionKey);
 				if (!draft) continue;
 				if (!id) {
@@ -236,7 +240,7 @@ export const useCurriculumFormController = () => {
 					continue;
 				}
 				setSectionState((prev) => ({ ...prev, pendingSync: true, pendingEntry: { data: draft.data, editingId: draft.editingId } }));
-				await saveListEntry({ addMethod, updateMethod, fields, formData: draft.data, editingId: draft.editingId, sectionKey, setSectionState, currentId: id });
+				await saveListEntry({ addMethod, updateMethod, fields, formData: draft.data, editingId: draft.editingId, sectionKey, setSectionState, currentId: id, dateField });
 			}
 
 			setStatus("IDLE");
