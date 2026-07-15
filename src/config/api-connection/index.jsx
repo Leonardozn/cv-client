@@ -26,13 +26,19 @@ export function createApiConnection({
 	onRefresh = null,
 	onExpired = null,
 }) {
-	let errorRefresh = false;
+	// In-flight refresh, shared across every request that fails concurrently while it's running.
+	// Each of them awaits this SAME promise and retries with the new token once it settles, instead
+	// of only the first failure refreshing while the rest reject outright — the previous boolean
+	// flag caused exactly that: concurrent requests (e.g. the Curriculum page loading Education/
+	// Experience/Certificate together) would show a session error even though the token had just
+	// been refreshed successfully a moment later.
+	let refreshPromise = null;
 
 	const instance = axios.create({ baseURL, headers });
 
 	instance.interceptors.request.use(
 		(config) => {
-			if (errorRefresh) return Promise.reject("cancelled");
+			if (refreshPromise) return Promise.reject("cancelled");
 			const resolved = typeof headers === "function" ? headers() : headers;
 			Object.assign(config.headers, resolved);
 			return config;
@@ -41,16 +47,12 @@ export function createApiConnection({
 	);
 
 	instance.interceptors.response.use(
-		(res) => {
-			errorRefresh = false;
-			return res;
-		},
+		(res) => res,
 		async (err) => {
 			const authStates = AUTH_STATES.split(",").map((s) => Number(s));
 			const isAuthError = authStates.includes(err.response?.status);
 
 			if (!isAuthError) return Promise.reject(err);
-			if (errorRefresh) return Promise.reject(err);
 
 			if (!onRefresh) {
 				console.error(err.response);
@@ -60,45 +62,39 @@ export function createApiConnection({
 				// 401s — a wrong password retried correctly must still reach the server,
 				// not be short-circuited by a lock nothing will ever clear.
 				if (!onExpired) return Promise.reject(err);
-				errorRefresh = true;
 				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
 			}
 
-			errorRefresh = true;
 			try {
-				const res = await onRefresh();
+				// Start the refresh once; any other request that fails while it's still
+				// pending awaits this same promise instead of calling onRefresh() again.
+				if (!refreshPromise) {
+					refreshPromise = onRefresh().finally(() => {
+						refreshPromise = null;
+					});
+				}
+				const res = await refreshPromise;
 
 				if (res.status >= 400) throw res;
 
-				errorRefresh = false;
-
 				const { method, data, headers } = err.config;
-				const response = await instance.request({
+				return await instance.request({
 					url: err.config.url,
 					method,
 					data,
 					headers,
 				});
-
-				return response;
 			} catch (error) {
 				const isExpiredAuth = authStates.includes(error?.response?.status);
-				if (!isExpiredAuth) {
-					errorRefresh = false;
-					return Promise.reject(error);
-				}
+				if (!isExpiredAuth) return Promise.reject(error);
 
 				console.error(error.response);
-				// Same reasoning as above: only lock the connection when we're actually
-				// about to navigate away. Without onExpired, leave it clear so the next
-				// request (e.g. a corrected retry) isn't short-circuited forever.
-				if (!onExpired) {
-					errorRefresh = false;
-					return Promise.reject(error);
-				}
-				errorRefresh = true;
+				// Same reasoning as above: only redirect when the refresh itself actually
+				// failed — a request that merely retried into another transient 401 without
+				// the refresh having failed would already have thrown before reaching here.
+				if (!onExpired) return Promise.reject(error);
 				clearSession();
 				alert("Session has expired.");
 				return (window.location.href = onExpired);
