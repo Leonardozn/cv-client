@@ -1,0 +1,48 @@
+export default [
+	{
+		id: "position",
+		label: "Position",
+		placeholder: "Job title",
+		input: "text",
+		value: '',
+		required: true,
+	},
+	{
+		id: "company",
+		label: "Company",
+		placeholder: "Company name",
+		input: "text",
+		value: '',
+		required: true,
+	},
+	{
+		id: "location",
+		label: "Location",
+		placeholder: "City / country",
+		input: "text",
+		value: '',
+	},
+	{
+		id: "startDate",
+		label: "Start Date",
+		placeholder: "Start date",
+		input: "date",
+		value: '',
+		required: true,
+	},
+	{
+		id: "endDate",
+		label: "End Date",
+		placeholder: "End date (empty if current)",
+		input: "date",
+		value: '',
+	},
+	{
+		id: "description",
+		label: "Description",
+		placeholder: "Responsibilities / achievements",
+		input: "text",
+		value: '',
+		required: true,
+	},
+];

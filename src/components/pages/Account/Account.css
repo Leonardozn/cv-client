@@ -1,0 +1,67 @@
+.account-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.account-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--color-foreground, #333333);
+	margin: 0;
+}
+
+/* Two settings cards side by side on wide viewports; the danger zone always
+   spans the full row so it reads as a separate, page-width band rather than
+   competing for a grid column. */
+.account-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+	gap: 1.5rem;
+	align-items: start;
+}
+
+.account-section__title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--color-foreground, #333333);
+	margin: 0 0 1rem;
+}
+
+.account-section__hint {
+	color: var(--color-foreground-muted, #666666);
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
+
+.account-section__hint--tight {
+	margin: 0.25rem 0 0;
+	max-width: 48ch;
+}
+
+.account-section--danger {
+	grid-column: 1 / -1;
+	border: 1px solid var(--color-error, #d32f2f);
+}
+
+.account-danger-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+}
+
+.account-danger-row__button {
+	flex-shrink: 0;
+}
+
+.account-danger-actions {
+	display: flex;
+	gap: 0.75rem;
+	justify-content: center;
+	margin-top: 1.5rem;
+}

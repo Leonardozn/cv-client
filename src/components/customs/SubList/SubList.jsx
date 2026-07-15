@@ -693,6 +693,7 @@ const SubList = ({
 				apiPath={col.apiPath}
 				imageHost={col.imageHost}
 				accept={col.accept}
+				options={col.options}
 				error={cellError}
 				onChange={(e) => {
 					const val = e.target

@@ -1,0 +1,24 @@
+# Dependencies and build output (reinstalled / rebuilt inside the image)
+node_modules
+**/node_modules
+dist
+
+# Git / hooks
+.git
+.gitignore
+.githooks
+.github
+
+# Local env (a fresh .env is generated at build time from build args)
+.env
+.env.*
+
+# Editor / tooling / docs not needed in the image
+.claude
+.vscode
+coverage
+*.log
+npm-debug.log*
+*.md
+Dockerfile
+.dockerignore

@@ -45,3 +45,31 @@
 .icon-button.hidden {
 	display: none; /* Hide when sidebar is open, as per previous logic */
 }
+
+.icon-button:focus-visible {
+	outline: 2px solid #ffffff;
+	outline-offset: 2px;
+}
+
+.icon-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.navbar-logout {
+	margin-inline-start: auto;
+	font-size: 1.25rem;
+}
+
+.navbar-logout-confirm-text {
+	margin-top: 0;
+	margin-bottom: 1.5rem;
+	color: var(--color-foreground-muted, #666666);
+	line-height: 1.5;
+}
+
+.navbar-logout-confirm-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: flex-end;
+}

@@ -25,3 +25,6 @@ dist-ssr
 *.sw?
 
 ui-settings.json
+
+# Claude Code local config/skills (not part of the shipped project)
+.claude
