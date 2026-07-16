@@ -4,6 +4,7 @@ import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
 import { useRegisterController } from "../../../config/controllers/useRegisterController";
 import { LOGIN_PATH } from "../../../config/router/paths";
+import { PASSWORD_POLICY_HINT } from "../../../config/models/password-policy";
 import "./Register.css";
 
 const Register = () => {
@@ -20,6 +21,7 @@ const Register = () => {
 					</p>
 				) : (
 					<>
+						<p className="register-hint">{PASSWORD_POLICY_HINT}</p>
 						<Form
 							fields={fields}
 							value={value}

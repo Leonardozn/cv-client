@@ -4,6 +4,7 @@ import Sheet from "../../customs/Sheet/Sheet";
 import PopUp from "../../customs/PopUp/PopUp";
 import { useResetPasswordController } from "../../../config/controllers/useResetPasswordController";
 import { LOGIN_PATH, FORGOT_PASSWORD_PATH } from "../../../config/router/paths";
+import { PASSWORD_POLICY_HINT } from "../../../config/models/password-policy";
 import "./ResetPassword.css";
 
 const ResetPassword = () => {
@@ -29,15 +30,18 @@ const ResetPassword = () => {
 				)}
 
 				{hasToken && !submitted && (
-					<Form
-						fields={fields}
-						value={value}
-						onChange={actions.onChange}
-						onSubmit={actions.handleSubmit}
-						submitText="Reset Password"
-						isLoading={isSubmitting}
-						triggerPopUp={actions.openPopUp}
-					/>
+					<>
+						<p className="reset-password-hint">{PASSWORD_POLICY_HINT}</p>
+						<Form
+							fields={fields}
+							value={value}
+							onChange={actions.onChange}
+							onSubmit={actions.handleSubmit}
+							submitText="Reset Password"
+							isLoading={isSubmitting}
+							triggerPopUp={actions.openPopUp}
+						/>
+					</>
 				)}
 			</Sheet>
 
