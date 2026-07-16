@@ -63,7 +63,6 @@ export function createApiConnection({
 				// not be short-circuited by a lock nothing will ever clear.
 				if (!onExpired) return Promise.reject(err);
 				clearSession();
-				alert("Session has expired.");
 				return (window.location.href = onExpired);
 			}
 
@@ -96,7 +95,6 @@ export function createApiConnection({
 				// the refresh having failed would already have thrown before reaching here.
 				if (!onExpired) return Promise.reject(error);
 				clearSession();
-				alert("Session has expired.");
 				return (window.location.href = onExpired);
 			}
 		},
