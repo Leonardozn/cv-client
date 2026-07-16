@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import apiMethods from "./auth";
 import changePasswordFormSource from "../models/form-source/change-password";
 import changePasswordVerifyFormSource from "../models/form-source/change-password-verify";
+import { isPasswordCompliant, PASSWORD_POLICY_HINT } from "../models/password-policy";
 
 const CODE_PATTERN = /^\d{6}$/;
 
@@ -23,6 +24,11 @@ export const useChangePasswordController = () => {
 			return;
 		}
 
+		if (!isPasswordCompliant(data.newPassword)) {
+			triggerPopUp("error", PASSWORD_POLICY_HINT);
+			return;
+		}
+
 		setStatus("SUBMITTING");
 		try {
 			await apiMethods.CHANGE_PASSWORD.method({
@@ -33,10 +39,13 @@ export const useChangePasswordController = () => {
 			triggerPopUp("info", "We sent a 6-digit verification code to your email. Enter it below to confirm the change.");
 		} catch (error) {
 			const statusCode = error.response?.data?.statusCode;
+			const serverMessage = error.response?.data?.message;
 			const message =
 				statusCode === 401
 					? "Your current password is incorrect."
-					: "Couldn't start the password change. Check your connection and try again.";
+					: statusCode === 400
+						? serverMessage || "Couldn't start the password change. Check your connection and try again."
+						: "Couldn't start the password change. Check your connection and try again.";
 			triggerPopUp("error", message);
 		} finally {
 			setStatus("IDLE");
