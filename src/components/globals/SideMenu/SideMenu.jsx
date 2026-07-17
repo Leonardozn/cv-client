@@ -8,6 +8,10 @@ import {
 } from "react-icons/ai";
 import "./SideMenu.css";
 
+// Same breakpoint SideMenu.css/Main.css already switch on for the mobile overlay layout - a nav
+// click there should collapse the sidebar back instead of leaving it covering the content.
+const MOBILE_BREAKPOINT_QUERY = "(max-width: 768px)";
+
 // Menu Configuration
 // { label: "", link: "", icon: null || <Icon /> }
 // The CLI-generated CRUD entries (User, Curriculum, Education, Experience,
@@ -33,9 +37,15 @@ const menuConfig = [
 ];
 
 // Renders a single menu item (with or without children)
-const MenuItem = ({ item, isOpen }) => {
+const MenuItem = ({ item, isOpen, closeSidebar }) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const hasChildren = item.children?.length > 0;
+
+	// Only an actual navigation (leaf link) should collapse the sidebar on mobile - expanding a
+	// group is just revealing more menu, not leaving the page.
+	const handleNavigate = () => {
+		if (window.matchMedia(MOBILE_BREAKPOINT_QUERY).matches) closeSidebar();
+	};
 
 	if (hasChildren) {
 		return (
@@ -68,6 +78,7 @@ const MenuItem = ({ item, isOpen }) => {
 								`nav-item nav-subitem ${isActive ? "active" : ""}`
 							}
 							title={child.label}
+							onClick={handleNavigate}
 						>
 							{child.icon && <span className="nav-icon">{child.icon}</span>}
 							<span className={`nav-label ${isOpen ? "visible" : "hidden"}`}>
@@ -87,6 +98,7 @@ const MenuItem = ({ item, isOpen }) => {
 				`nav-item ${isActive ? "active" : ""} ${!item.icon ? "no-icon" : ""}`
 			}
 			title={!isOpen && item.icon ? item.label : ""}
+			onClick={handleNavigate}
 		>
 			{item.icon && <span className="nav-icon">{item.icon}</span>}
 			<span className={`nav-label ${isOpen ? "visible" : "hidden"}`}>
@@ -96,7 +108,7 @@ const MenuItem = ({ item, isOpen }) => {
 	);
 };
 
-const SideMenu = ({ isOpen, toggleSidebar }) => {
+const SideMenu = ({ isOpen, toggleSidebar, closeSidebar }) => {
 	return (
 		<aside className={`sidebar-container ${isOpen ? "open" : "closed"}`}>
 			<div className="sidebar-header">
@@ -107,7 +119,12 @@ const SideMenu = ({ isOpen, toggleSidebar }) => {
 
 			<nav className="nav-list">
 				{menuConfig.map((item) => (
-					<MenuItem key={item.link} item={item} isOpen={isOpen} />
+					<MenuItem
+						key={item.link}
+						item={item}
+						isOpen={isOpen}
+						closeSidebar={closeSidebar}
+					/>
 				))}
 			</nav>
 		</aside>

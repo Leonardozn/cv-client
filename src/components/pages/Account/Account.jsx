@@ -6,6 +6,7 @@ import Button from "../../modulars/Button/Button";
 import { useEditProfileController } from "../../../config/controllers/useEditProfileController";
 import { useChangePasswordController } from "../../../config/controllers/useChangePasswordController";
 import { useDeactivateAccountController } from "../../../config/controllers/useDeactivateAccountController";
+import { PASSWORD_POLICY_HINT } from "../../../config/models/password-policy";
 import "./Account.css";
 
 const Account = () => {
@@ -44,15 +45,18 @@ const Account = () => {
 					<h2 className="account-section__title">Change Password</h2>
 
 					{step === "REQUEST" && (
-						<Form
-							fields={requestFields}
-							value={requestValue}
-							onChange={actions.onChangeRequest}
-							onSubmit={actions.handleRequestChange}
-							submitText="Send Verification Code"
-							isLoading={isSubmitting}
-							triggerPopUp={actions.openPopUp}
-						/>
+						<>
+							<p className="account-section__hint">{PASSWORD_POLICY_HINT}</p>
+							<Form
+								fields={requestFields}
+								value={requestValue}
+								onChange={actions.onChangeRequest}
+								onSubmit={actions.handleRequestChange}
+								submitText="Send Verification Code"
+								isLoading={isSubmitting}
+								triggerPopUp={actions.openPopUp}
+							/>
+						</>
 					)}
 
 					{step === "VERIFY" && (

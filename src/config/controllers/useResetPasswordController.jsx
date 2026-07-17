@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import apiMethods from "./auth";
 import resetPasswordFormSource from "../models/form-source/reset-password";
+import { isPasswordCompliant, PASSWORD_POLICY_HINT } from "../models/password-policy";
 
 export const useResetPasswordController = () => {
 	const [searchParams] = useSearchParams();
@@ -22,14 +23,20 @@ export const useResetPasswordController = () => {
 			return;
 		}
 
+		if (!isPasswordCompliant(formData.newPassword)) {
+			triggerPopUp("error", PASSWORD_POLICY_HINT);
+			return;
+		}
+
 		setStatus("SUBMITTING");
 		try {
 			await apiMethods.RESET_PASSWORD.method({ token, newPassword: formData.newPassword });
 			setSubmitted(true);
 		} catch (error) {
 			const statusCode = error.response?.data?.statusCode;
+			const serverMessage = error.response?.data?.message;
 			const message = statusCode === 400
-				? "This reset link is invalid or has expired. Request a new one."
+				? serverMessage || "This reset link is invalid or has expired. Request a new one."
 				: "Couldn't reset the password. Check your connection and try again.";
 			triggerPopUp("error", message);
 		} finally {

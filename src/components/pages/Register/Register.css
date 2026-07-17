@@ -23,6 +23,13 @@
 	margin: 0;
 }
 
+.register-hint {
+	color: var(--color-foreground-muted, #666666);
+	margin: 0;
+	line-height: 1.5;
+	font-size: 0.875rem;
+}
+
 .register-success {
 	color: var(--color-foreground-muted, #666666);
 	margin: 0;

@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import apiMethods from "./auth";
 import { preparePayload } from "./map-methods";
 import registerFormConfig from "../models/form-source/register";
+import { isPasswordCompliant, PASSWORD_POLICY_HINT } from "../models/password-policy";
 
 export const useRegisterController = () => {
 	const [status, setStatus] = useState("IDLE");
@@ -18,6 +19,11 @@ export const useRegisterController = () => {
 	const closePopUp = useCallback(() => setPopUp((prev) => ({ ...prev, isOpen: false })), []);
 
 	const handleSubmit = useCallback(async (formData) => {
+		if (!isPasswordCompliant(formData.password)) {
+			triggerPopUp("error", PASSWORD_POLICY_HINT);
+			return;
+		}
+
 		setStatus("SUBMITTING");
 		try {
 			const payload = preparePayload(formData, registerFormConfig);
@@ -25,9 +31,10 @@ export const useRegisterController = () => {
 			setRegistered(true);
 		} catch (error) {
 			const statusCode = error.response?.data?.statusCode;
+			const serverMessage = error.response?.data?.message;
 			const message =
 				statusCode === 400
-					? "This email is already registered. Try signing in instead."
+					? serverMessage || "This email is already registered. Try signing in instead."
 					: "Couldn't create the account. Check your connection and try again.";
 			triggerPopUp("error", message);
 		} finally {
